@@ -1,0 +1,37 @@
+{
+  "name": "assignment_1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "jamesnottidge <freshice57@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.18.0",
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/preset-env": "^7.17.12",
+    "@babel/register": "^7.17.7",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "chai": "^4.3.6",
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.26.0",
+    "http-server": "^14.1.0",
+    "mocha": "^10.0.0",
+    "postcss": "^8.4.14",
+    "postcss-import": "^14.1.0",
+    "rollup": "^2.74.0",
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-serve": "^1.1.0"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w",
+    "lint": "eslint src/",
+    "pretest": "eslint src/",
+    "test": "mocha",
+    "test:watch": "mocha -w" 
+  },
+  "dependencies": {}
+}

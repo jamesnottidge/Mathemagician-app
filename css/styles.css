@@ -1,0 +1,28 @@
+body{
+    font-size: 16px;
+    height: 100vh;
+}
+#root{
+    font-size: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+}
+.display-paragraph{
+    display: flex;
+    justify-content: center;
+}
+#game-over{
+    display: flex;
+    justify-content: center;
+}
+#replay-button{
+    margin: 1rem auto;
+    display: block;
+}
+.stylish{
+    background-color: rgba(222, 165, 78, 0.501);
+    border-radius: 0.6rem;
+    padding: 1.5rem;
+}

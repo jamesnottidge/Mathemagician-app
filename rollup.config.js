@@ -4,6 +4,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import postcss from "rollup-plugin-postcss";
 import postCssImport from "postcss-import";
+import replace from "@rollup/plugin-replace";
 import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
 
@@ -19,21 +20,25 @@ export default {
     sourcemap: true
   },
   plugins: [
+    commonjs({
+        include: "node_modules/**"
+    }),
     babel({ 
       babelHelpers: "bundled"
     }),
     resolve(),
-    commonjs({
-        include: "node_modules/**"
+    replace({
+      'process.env.NODE_ENV': JSON.stringify( 'development' )
     }),
+    
     postcss({
           plugins: [postCssImport]
         })
 
   ].concat(
       watching? [
-        serve({contentBase: outputFolder, port: 10001}),
-        livereload()
+        serve({contentBase: outputFolder, open: true}),
+        livereload({watch: 'public'})
       ]:[]
   )
 };

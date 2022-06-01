@@ -25,6 +25,7 @@
         "eol-last":"off",
         "semi":"warn",
         "no-console": 2,
-        "padded-blocks":"off"
+        "padded-blocks":"off",
+        "no-unused-vars":"off"
     }
 }

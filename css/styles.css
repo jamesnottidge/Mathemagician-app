@@ -1,6 +1,10 @@
+*{
+    border: 1px solid red;
+}
 body{
     font-size: 16px;
     height: 100vh;
+    
 }
 #root{
     font-size: 2em;
@@ -8,6 +12,21 @@ body{
     justify-content: center;
     align-items: center;
     min-height: 100%;
+}
+.display{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: 0.8rem;
+    background-color: rgba(222, 165, 78, 0.501);
+}
+.input{
+    
+}
+.button{
+
 }
 .display-paragraph{
     display: flex;

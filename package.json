@@ -8,10 +8,12 @@
     "@babel/core": "^7.18.0",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-env": "^7.17.12",
+    "@babel/preset-react": "^7.17.12",
     "@babel/register": "^7.17.7",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-replace": "^4.0.0",
     "chai": "^4.3.6",
     "eslint": "^8.15.0",
     "eslint-config-google": "^0.14.0",
@@ -31,7 +33,11 @@
     "lint": "eslint src/",
     "pretest": "eslint src/",
     "test": "mocha",
-    "test:watch": "mocha -w" 
+    "test:watch": "mocha -w"
   },
-  "dependencies": {}
+  "dependencies": {
+    "prop-types": "^15.8.1",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  }
 }

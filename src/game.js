@@ -1,14 +1,10 @@
-import { Display } from "./display.js";
-const display = new Display();
+import {Display} from "./display.js";
 export default class Game {
     constructor() {
         this.sum=0;
         this.gameLevel=0;
         this.time=0;
-    }
-
-    setup() {
-        display.render(1);
+        this.display=new Display();
     }
 
     play() {
@@ -16,12 +12,14 @@ export default class Game {
         const valB=Math.floor(Math.random() * 10);
         this.sum = valA + valB;
         this.gameLevel++;
-        display.render(2, valA, valB);
+        this.display.render("play", valA, valB);
     }
 
     end() {
-        display.render(3, Date.now()-this.time);
+        this.display.render("end", Date.now()-this.time);
         this.gameLevel=0;
+        this.time=0;
+        this.sum=0;
     }
 
     start() {
@@ -34,9 +32,8 @@ export default class Game {
             this.play();
         } else if (value == this.sum && this.gameLevel>=3) {
             this.end();
-        }
-        else{
-            display.render(4,value);
+        } else {
+            this.display.render("wrongAnswer",value);
         }
     
     }

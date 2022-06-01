@@ -1,8 +1,10 @@
- import '../css/index.css';
-
+import '../css/index.css';
 import Game from "./game.js";
+import {Display} from "./display.js";
 const game = new Game();
-game.setup();
+const display = new Display();
+
+display.render("setup");
 
 document.querySelector('#root').addEventListener('keyup', (e) => {
     const target = e.target;

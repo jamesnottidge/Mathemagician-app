@@ -2,9 +2,12 @@
     border: 1px solid red;
 }
 body{
-    font-size: 16px;
     height: 100vh;
     
+}
+.expression{
+    display: flex;
+    justify-content: center;
 }
 #root{
     font-size: 2em;
@@ -40,8 +43,14 @@ body{
     margin: 1rem auto;
     display: block;
 }
-.stylish{
+.container{
     background-color: rgba(222, 165, 78, 0.501);
     border-radius: 0.6rem;
     padding: 1.5rem;
+}
+#wrong-answer{
+    width: fit-content;
+    margin: auto;
+    color: red;
+    font-size: 0.7rem;
 }

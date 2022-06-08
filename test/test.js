@@ -2,9 +2,9 @@
 const assert = require('chai').assert;
 import {gameOver} from "../src/gameover.js";
 import {sum} from "../src/sum.js";
-import {Game} from "../src/game";
+import {App} from "../src/app";
 import {useState} from "react";
-import { Setup } from "../src/setup.js";
+import {Setup} from "../src/setup.js";
 describe("sum", () => {
     it("adds numbers", () => {
         assert.strictEqual(sum(6,3),9, "works I guess");
@@ -18,7 +18,8 @@ describe("sum", () => {
 //         const fly = {innerHTML: ""};
 //         gameOver(fly, timeSpent);
 //         // eslint-disable-next-line max-len
-//         assert.equal(fly.innerHTML, `<p id = "game-over">GAME OVER</p><p>You spent 0 milliseconds playing.<br><button id = "replay-button">Replay?</button>`, "works I guess");
+//         assert.equal(fly.innerHTML, `<p id = "game-over">GAME OVER</p><p>You spent 0 milliseconds playing.<br>
+// <button id = "replay-button">Replay?</button>`, "works I guess");
 //     });
 // });
 

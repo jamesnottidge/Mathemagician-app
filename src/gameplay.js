@@ -3,7 +3,6 @@ import {useState} from "react";
 import {PropTypes} from "prop-types";
 
 export function Gameplay(props) {
-const [count, setCount] = useState(1);
 const valA = Math.floor(Math.random() * 10);
 const valB = Math.floor(Math.random() * 10);   
 let sign;
@@ -19,11 +18,11 @@ const expression = () => {
 };
 const answer = expression();
 const handleInputChange=(e) => {
-    if (answer == e.target.value && count < props.rounds) {
+    if (answer == e.target.value && props.count < props.rounds) {
         e.target.value = "";
-        setCount(count + 1);
-    } else if (answer == e.target.value && count == props.rounds) {
-        props.start(2);
+        props.changeCount(props.count + 1);
+    } else if (answer == e.target.value && props.count == props.rounds) {
+        props.changeMode(2);
     }
 };
 
@@ -37,5 +36,7 @@ const handleInputChange=(e) => {
 
 Gameplay.propTypes = {
     rounds: PropTypes.number.isRequired,
-    start: PropTypes.func.isRequired
+    count: PropTypes.number.isRequired,
+    changeCount: PropTypes.func.isRequired,
+    changeMode: PropTypes.func.isRequired
 };

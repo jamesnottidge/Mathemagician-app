@@ -1,5 +1,5 @@
 *{
-    border: 1px solid red;
+    border: 0px solid red;
 }
 body{
     height: 100vh;
@@ -16,6 +16,9 @@ body{
     align-items: center;
     min-height: 100%;
 }
+#roundChanger{
+    margin: 1rem;
+}
 .display{
     display: flex;
     flex-direction: column;
@@ -25,12 +28,12 @@ body{
     border-radius: 0.8rem;
     background-color: rgba(222, 165, 78, 0.501);
 }
-.input{
+/* .input{
     
 }
 .button{
 
-}
+} */
 .display-paragraph{
     display: flex;
     justify-content: center;

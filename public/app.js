@@ -1,3 +1,5 @@
+
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 (function () {
 	'use strict';
 
@@ -10709,8 +10711,11 @@
 
 	function Setup(props) {
 	  const handleClick = () => {
-	    props.start(1);
-	    props.time();
+	    props.changeMode(2);
+	  };
+
+	  const handleChange = e => {
+	    props.changeRounds(e.target.value);
 	  };
 
 	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
@@ -10722,7 +10727,7 @@
 	      min: "1",
 	      max: "20",
 	      value: props.rounds,
-	      onChange: props.setrounds,
+	      onChange: handleChange,
 	      autoFocus: true
 	    }), /*#__PURE__*/jsxRuntime.exports.jsx("div", {
 	      children: /*#__PURE__*/jsxRuntime.exports.jsx("button", {
@@ -10733,10 +10738,9 @@
 	  });
 	}
 	Setup.propTypes = {
-	  rounds: propTypes.exports.PropTypes.string.isRequired,
-	  setrounds: propTypes.exports.PropTypes.func.isRequired,
-	  start: propTypes.exports.PropTypes.func.isRequired,
-	  time: propTypes.exports.PropTypes.func.isRequired
+	  rounds: propTypes.exports.PropTypes.number.isRequired,
+	  changeMode: propTypes.exports.PropTypes.func.isRequired,
+	  changeRounds: propTypes.exports.PropTypes.func.isRequired
 	};
 
 	const sum = (a, b) => {
@@ -10744,7 +10748,6 @@
 	};
 
 	function Gameplay(props) {
-	  const [count, setCount] = react.exports.useState(1);
 	  const valA = Math.floor(Math.random() * 10);
 	  const valB = Math.floor(Math.random() * 10);
 	  let sign;
@@ -10764,11 +10767,11 @@
 	  const answer = expression();
 
 	  const handleInputChange = e => {
-	    if (answer == e.target.value && count < props.rounds) {
+	    if (answer == e.target.value && props.count < props.rounds) {
 	      e.target.value = "";
-	      setCount(count + 1);
-	    } else if (answer == e.target.value && count == props.rounds) {
-	      props.start(2);
+	      props.changeCount(props.count + 1);
+	    } else if (answer == e.target.value && props.count == props.rounds) {
+	      props.changeMode(2);
 	    }
 	  };
 
@@ -10785,20 +10788,32 @@
 	}
 	Gameplay.propTypes = {
 	  rounds: propTypes.exports.PropTypes.number.isRequired,
-	  start: propTypes.exports.PropTypes.func.isRequired
+	  count: propTypes.exports.PropTypes.number.isRequired,
+	  changeCount: propTypes.exports.PropTypes.func.isRequired,
+	  changeMode: propTypes.exports.PropTypes.func.isRequired
 	};
 
 	function Gameover(props) {
 	  const timeSpent = Date.now() - props.time;
 
-	  const handleClick = () => {
-	    props.start(0);
+	  const handleInputChange = e => {};
+
+	  const handleClick = e => {
+	    props.reset(document.querySelector('#roundChanger').value);
 	  };
 
 	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
 	    className: "display",
 	    children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
 	      children: ["You spent ", timeSpent, " milliseconds playing "]
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx("input", {
+	      type: "number",
+	      defaultValue: props.count,
+	      id: "roundChanger",
+	      min: "1",
+	      max: "20",
+	      onChange: handleInputChange,
+	      autoFocus: true
 	    }), /*#__PURE__*/jsxRuntime.exports.jsx("button", {
 	      onClick: handleClick,
 	      autoFocus: true,
@@ -10806,51 +10821,120 @@
 	    })]
 	  });
 	}
-	Gameover.PropTypes = {
-	  start: propTypes.exports.PropTypes.func.isRequired,
-	  time: propTypes.exports.PropTypes.func.isRequired
+	Gameover.propTypes = {
+	  reset: propTypes.exports.PropTypes.func.isRequired,
+	  time: propTypes.exports.PropTypes.number.isRequired,
+	  count: propTypes.exports.PropTypes.number.isRequired
 	};
 
 	function Game(props) {
-	  const [rounds, setRounds] = react.exports.useState(1);
-	  const [mode, setMode] = react.exports.useState(0);
-	  const [time, setTime] = react.exports.useState(0);
+	  const [mode, setMode] = react.exports.useState(1);
+	  const [count, setCount] = react.exports.useState(1);
+	  const [time, setTime] = react.exports.useState(Date.now());
 
-	  const onChange = e => {
-	    setRounds(e.target.value);
+	  const changeCount = newCount => {
+	    setCount(newCount);
 	  };
 
-	  const start = count => {
-	    setMode(count);
+	  const changeMode = newMode => {
+	    setMode(newMode);
 	  };
 
-	  const timer = () => {
+	  const reset = rounds => {
+	    if (document.querySelector('#roundChanger').value != '') {
+	      props.changeRounds(rounds);
+	    }
+
+	    changeMode(1);
+	    changeCount(1);
 	    setTime(Date.now());
 	  };
 
-	  if (mode === 0) {
-	    return /*#__PURE__*/jsxRuntime.exports.jsx(Setup, {
-	      rounds: rounds,
-	      setrounds: onChange,
-	      start: start,
-	      time: timer
-	    });
-	  } else if (mode === 1) {
-	    return /*#__PURE__*/jsxRuntime.exports.jsx(Gameplay, {
-	      rounds: rounds,
-	      start: start
-	    });
-	  } else if (mode === 2) {
-	    return /*#__PURE__*/jsxRuntime.exports.jsx(Gameover, {
-	      start: start,
-	      time: time
-	    });
+	  switch (mode) {
+	    case 1:
+	      return /*#__PURE__*/jsxRuntime.exports.jsx(Gameplay, {
+	        rounds: props.rounds,
+	        count: count,
+	        changeCount: changeCount,
+	        changeMode: changeMode
+	      });
+
+	    case 2:
+	      return /*#__PURE__*/jsxRuntime.exports.jsx(Gameover, {
+	        time: time,
+	        reset: reset,
+	        count: count
+	      });
 	  }
 	}
-	Game.PropTypes = {};
+	Game.propTypes = {
+	  rounds: propTypes.exports.PropTypes.number.isRequired,
+	  changeRounds: propTypes.exports.PropTypes.func.isRequired
+	};
+
+	function App(props) {
+	  const [rounds, setRounds] = react.exports.useState(1);
+	  const [mode, setMode] = react.exports.useState(1); // const [time, setTime] = useState(0);
+
+	  const changeMode = newMode => {
+	    setMode(newMode);
+	  };
+
+	  const changeRounds = newNumberOfRounds => {
+	    setRounds(newNumberOfRounds);
+	  };
+
+	  switch (mode) {
+	    case 1:
+	      return /*#__PURE__*/jsxRuntime.exports.jsx(Setup, {
+	        changeMode: changeMode,
+	        changeRounds: changeRounds,
+	        rounds: rounds
+	      });
+
+	    case 2:
+	      return /*#__PURE__*/jsxRuntime.exports.jsx(Game, {
+	        rounds: rounds,
+	        changeRounds: changeRounds
+	      });
+	  }
+	}
+	App.propTypes = {};
+
+	function styleInject(css, ref) {
+	  if (ref === void 0) ref = {};
+	  var insertAt = ref.insertAt;
+
+	  if (!css || typeof document === 'undefined') {
+	    return;
+	  }
+
+	  var head = document.head || document.getElementsByTagName('head')[0];
+	  var style = document.createElement('style');
+	  style.type = 'text/css';
+
+	  if (insertAt === 'top') {
+	    if (head.firstChild) {
+	      head.insertBefore(style, head.firstChild);
+	    } else {
+	      head.appendChild(style);
+	    }
+	  } else {
+	    head.appendChild(style);
+	  }
+
+	  if (style.styleSheet) {
+	    style.styleSheet.cssText = css;
+	  } else {
+	    style.appendChild(document.createTextNode(css));
+	  }
+	}
+
+	var css_248z = "*{\n    border: 0px solid red;\n}\nbody{\n    height: 100vh;\n    \n}\n.expression{\n    display: flex;\n    justify-content: center;\n}\n#root{\n    font-size: 2em;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    min-height: 100%;\n}\n#roundChanger{\n    margin: 1rem;\n}\n.display{\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: center;\n    padding: 1.5rem;\n    border-radius: 0.8rem;\n    background-color: rgba(222, 165, 78, 0.501);\n}\n/* .input{\n    \n}\n.button{\n\n} */\n.display-paragraph{\n    display: flex;\n    justify-content: center;\n}\n#game-over{\n    display: flex;\n    justify-content: center;\n}\n#replay-button{\n    margin: 1rem auto;\n    display: block;\n}\n.container{\n    background-color: rgba(222, 165, 78, 0.501);\n    border-radius: 0.6rem;\n    padding: 1.5rem;\n}\n#wrong-answer{\n    width: fit-content;\n    margin: auto;\n    color: red;\n    font-size: 0.7rem;\n}";
+	styleInject(css_248z);
 
 	const root = ReactDOM.createRoot(document.getElementById("root"));
-	root.render( /*#__PURE__*/jsxRuntime.exports.jsx(Game, {}));
+	root.render( /*#__PURE__*/jsxRuntime.exports.jsx(App, {}));
 
 })();
 //# sourceMappingURL=app.js.map

@@ -1,37 +1,51 @@
-// eslint-disable-next-line no-undef
 const assert = require('chai').assert;
-import {gameOver} from "../src/gameover.js";
-import {sum} from "../src/sum.js";
-import {App} from "../src/app";
-import {useState} from "react";
-import {Setup} from "../src/setup.js";
-describe("sum", () => {
-    it("adds numbers", () => {
-        assert.strictEqual(sum(6,3),9, "works I guess");
+const jsdom = require('global-jsdom/register');
+import {render, screen} from '@testing-library/react';
+import { App } from '../src/components/App';
+import { History } from '../src/components/History';
+import { Gameplay } from '../src/screens/Gameplay';
+import { Gameover } from '../src/screens/Gameover';
+import { GameStart } from '../src/screens/GameStart';
+
+
+describe('App', () => {
+    it('renders App component', () => {
+        render(<App />);
+
+        screen.debug();
+    });
+});
+
+describe('History', () => {
+    it('renders History component', () => {
+        render(<History />);
+
+        screen.debug();
+    });
+});
+
+describe('Gameplay', () => {
+    it('renders Gameplay screen', () => {
+        render(<Gameplay />);
+
+        screen.debug();
+    });
+});
+
+describe('GameStart', () => {
+    it('renders Gamestart screen', () => {
+        render(<GameStart />);
+
+        screen.debug();
     });
 });
 
 
-// describe("gameOver", () => {
-//     it("changes display", () => {
-//         const timeSpent = 0;
-//         const fly = {innerHTML: ""};
-//         gameOver(fly, timeSpent);
-//         // eslint-disable-next-line max-len
-//         assert.equal(fly.innerHTML, `<p id = "game-over">GAME OVER</p><p>You spent 0 milliseconds playing.<br>
-// <button id = "replay-button">Replay?</button>`, "works I guess");
-//     });
-// });
+describe('Gameover', () => {
+    it('renders Gameover screen', () => {
+        render(<Gameover />);
 
-describe("setup", () => {
-    it("returns setup", () => {
-        const output = Setup({rounds, setrounds});
-        assert.equal(output, <div className="display">
-        <p>Hi, this is James' math game, choose your parameters and get to calculating!</p>
-        <input type="number" min="1" max="20" value={props.rounds} onChange = {props.setrounds}></input>
-        <div>
-            <button onClick={handleClick}>Start</button>
-        </div>
-    </div>, "ok?");
+        screen.debug();
     });
 });
+

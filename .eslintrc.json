@@ -17,7 +17,7 @@
     "rules": {
         "quotes": "off",
         "no-trailing-spaces":"off",
-        "max-len": ["error", 120],
+        "max-len": ["error", 150],
         "require-jsdoc": "off",
         "comma-dangle": "off",
         "comma-spacing": "off",
@@ -26,6 +26,7 @@
         "semi":"warn",
         "no-console": 2,
         "padded-blocks":"off",
-        "no-unused-vars":"off"
+        "no-unused-vars":"off",
+        "object-curly-spacing": "off"
     }
 }

@@ -14,6 +14,10 @@ const generateExpression = () => {
     setSign(signsRef[Math.floor(Math.random() * signsRef.length)]);
     setFirstNum(Math.floor(Math.random() * 20));
     setSecondNum(Math.floor(Math.random() * 20));
+};
+
+const handleSubmit = (e) => {
+    e.preventDefault();
 }
 
 const handleInputChange=(e) => {
@@ -50,7 +54,9 @@ const handleInputChange=(e) => {
     return (
         <div className="display">
             <p>{firstNum} {sign} {secondNum}</p>
-            <input type="number" onChange={handleInputChange} autoFocus></input>
+            <form onSubmit={handleSubmit}>
+                <input type="number" onChange={handleInputChange} autoFocus />
+            </form>
         </div>
     );
 }

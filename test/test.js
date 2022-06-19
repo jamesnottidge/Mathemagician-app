@@ -1,7 +1,7 @@
 const assert = require('chai').assert;
 const jsdom = require('global-jsdom/register');
 import {render, screen} from '@testing-library/react';
-import { App } from '../src/components/App';
+import { App } from '../src/App';
 import { History } from '../src/components/History';
 import { Gameplay } from '../src/screens/Gameplay';
 import { Gameover } from '../src/screens/Gameover';

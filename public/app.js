@@ -10791,6 +10791,10 @@
 	    setSecondNum(Math.floor(Math.random() * 20));
 	  };
 
+	  const handleSubmit = e => {
+	    e.preventDefault();
+	  };
+
 	  const handleInputChange = e => {
 	    const answer = evaluate(firstNum, secondNum, sign);
 	    const input = Number.parseInt(e.target.value);
@@ -10826,10 +10830,13 @@
 	    className: "display",
 	    children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
 	      children: [firstNum, " ", sign, " ", secondNum]
-	    }), /*#__PURE__*/jsxRuntime.exports.jsx("input", {
-	      type: "number",
-	      onChange: handleInputChange,
-	      autoFocus: true
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx("form", {
+	      onSubmit: handleSubmit,
+	      children: /*#__PURE__*/jsxRuntime.exports.jsx("input", {
+	        type: "number",
+	        onChange: handleInputChange,
+	        autoFocus: true
+	      })
 	    })]
 	  });
 	}
@@ -12412,7 +12419,8 @@
 
 	"undefined" != typeof navigator && "ReactNative" === navigator.product && console.warn("It looks like you've imported 'styled-components' on React Native.\nPerhaps you're looking to import 'styled-components/native'?\nRead more about this at https://www.styled-components.com/docs/basics#react-native"), "undefined" != typeof window && (window["__styled-components-init__"] = window["__styled-components-init__"] || 0, 1 === window["__styled-components-init__"] && console.warn("It looks like there are several instances of 'styled-components' initialized in this application. This may cause dynamic styles to not render properly, errors during the rehydration process, a missing theme prop, and makes your application bigger without good reason.\n\nSee https://s-c.sh/2BAXzed for more info."), window["__styled-components-init__"] += 1);
 
-	const StyledHistory = qe.div`
+	const StyledHistory = qe.li`
+    list-style-type: none;
     margin: 1.5rem 1.5rem;
     display: flex;
     flex-direction: column;
@@ -12423,9 +12431,6 @@
     color: ${props => props.speed ? "green" : "orange"};
     color: ${props => props.value !== props.answer ? "red" : ""};
     background-color: rgba(222, 165, 78, 0.501);
-    input {
-        width: 3rem;
-    }
 `;
 
 	const History = props => {
@@ -12457,16 +12462,9 @@
 	  const [time, setTime] = react.exports.useState(null);
 	  const [memory, setMemory] = react.exports.useState([]);
 	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
-	    children: [/*#__PURE__*/jsxRuntime.exports.jsx("div", {
+	    children: [/*#__PURE__*/jsxRuntime.exports.jsx("ul", {
 	      class: "historyDisplay",
-	      children: memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, {
-	        firstNum: item.firstNum,
-	        secondNum: item.secondNum,
-	        answer: item.answer,
-	        time: item.time,
-	        value: item.value,
-	        sign: item.sign,
-	        speed: item.speed
+	      children: memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
 	      }))
 	    }), gameState === "start" && /*#__PURE__*/jsxRuntime.exports.jsx(GameStart, {
 	      rounds: rounds,

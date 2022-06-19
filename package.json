@@ -35,7 +35,6 @@
     "build": "rollup -c",
     "build:watch": "rollup -c -w",
     "lint": "eslint src/",
-    "pretest": "rollup -c",
     "test": "mocha",
     "test:watch": "mocha -w"
   },

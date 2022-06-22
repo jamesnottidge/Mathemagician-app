@@ -1,6 +1,6 @@
 
 
-export const signsRef = ["+", "*", "/", "-"];
+export const signsRef = ["+", "*", "-"];
 
 export const evaluate = (firstNum, secondNum, sign) => {
     switch (sign) {

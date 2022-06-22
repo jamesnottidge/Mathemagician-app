@@ -1,17 +1,22 @@
 import {PropTypes} from "prop-types";
-import { useState } from "react";
+import { useEffect } from "react";
+import { History } from "../components/History" 
 
 export function Gameover(props) {
 
-    const { time, rounds, setRounds, setTime, setGameState, setCount, count, setMemory } = props;
+    const { time, rounds, setRounds, setTime, setGameState, setCount, count, setMemory, clearMemory, memory, setStorage, storage} = props;
     const timeSpent = Date.now()-time;
-    let inputVal=count;
+    let inputVal=count; 
+    const keyArray=Object.keys(storage);
+    useEffect(() =>{
+        setStorage(memory);
+    },[memory]);
     const handleClick = (e) => {
         setCount(1);
         setRounds(Number.parseInt(inputVal));
         setTime(Date.now());
         setGameState("play");
-        setMemory([]);
+        clearMemory();
     };
 
     const handleInputChange = (e) => {
@@ -23,6 +28,14 @@ export function Gameover(props) {
             <input type="number" defaultValue={count} 
             id="roundChanger" min='1' max='20' onChange={handleInputChange} autoFocus></input>
             <button onClick={handleClick} autoFocus>Play again?</button>
+            {keyArray.map((key) => {
+                    return (
+                        <div>
+                            <p>{key}</p>
+                            {storage[key].map( (item)=> (<History { ...item } />))}
+                        </div>
+                    );
+                })}
         </div>
     );
 }

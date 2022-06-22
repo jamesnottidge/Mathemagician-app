@@ -10753,7 +10753,7 @@
 	  changeRounds: propTypes.exports.PropTypes.func.isRequired
 	};
 
-	const signsRef = ["+", "*", "/", "-"];
+	const signsRef = ["+", "*", "-"];
 	const evaluate = (firstNum, secondNum, sign) => {
 	  switch (sign) {
 	    case "+":
@@ -10777,13 +10777,17 @@
 	    setCount,
 	    setGameState,
 	    memory,
-	    setMemory
+	    setMemory,
+	    setStorage
 	  } = props;
 	  const [sign, setSign] = react.exports.useState(null);
 	  const [firstNum, setFirstNum] = react.exports.useState(null);
 	  const [secondNum, setSecondNum] = react.exports.useState(null);
+	  const [skipUse, setSkipUse] = react.exports.useState(0);
 	  const time = Date.now();
-	  react.exports.useEffect(() => generateExpression(), []);
+	  react.exports.useEffect(() => {
+	    generateExpression();
+	  }, []);
 
 	  const generateExpression = () => {
 	    setSign(signsRef[Math.floor(Math.random() * signsRef.length)]);
@@ -10795,12 +10799,18 @@
 	    e.preventDefault();
 	  };
 
+	  const skip = () => {
+	    setSkipUse(skipUse + 1);
+	    setCount(count + 1);
+	    generateExpression();
+	  };
+
 	  const handleInputChange = e => {
 	    const answer = evaluate(firstNum, secondNum, sign);
 	    const input = Number.parseInt(e.target.value);
 
 	    if (answer.toString().length === input.toString().length && count < rounds) {
-	      setMemory(() => [...memory, {
+	      setMemory({
 	        firstNum: firstNum,
 	        secondNum: secondNum,
 	        answer: answer,
@@ -10808,12 +10818,12 @@
 	        value: input,
 	        time: Date.now() - time,
 	        speed: Math.floor((Date.now() - time) / 1000) < 3
-	      }]);
+	      });
 	      e.target.value = "";
 	      setCount(count + 1);
 	      generateExpression();
 	    } else if (answer.toString().length === input.toString().length && count == rounds) {
-	      setMemory(() => [...memory, {
+	      setMemory({
 	        firstNum: firstNum,
 	        secondNum: secondNum,
 	        answer: answer,
@@ -10821,7 +10831,8 @@
 	        value: input,
 	        time: Date.now() - time,
 	        speed: Math.floor((Date.now() - time) / 1000) < 3
-	      }]);
+	      });
+	      setSkipUse(0);
 	      setGameState("end");
 	    }
 	  };
@@ -10837,7 +10848,10 @@
 	        onChange: handleInputChange,
 	        autoFocus: true
 	      })
-	    })]
+	    }), skipUse < Math.floor(rounds / 3) ? /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	      onClick: skip,
+	      children: "Skip"
+	    }) : null]
 	  });
 	}
 	Gameplay.propTypes = {
@@ -10845,57 +10859,6 @@
 	  count: propTypes.exports.PropTypes.number.isRequired,
 	  setCount: propTypes.exports.PropTypes.func.isRequired,
 	  setGameState: propTypes.exports.PropTypes.func.isRequired
-	};
-
-	function Gameover(props) {
-	  const {
-	    time,
-	    rounds,
-	    setRounds,
-	    setTime,
-	    setGameState,
-	    setCount,
-	    count,
-	    setMemory
-	  } = props;
-	  const timeSpent = Date.now() - time;
-	  let inputVal = count;
-
-	  const handleClick = e => {
-	    setCount(1);
-	    setRounds(Number.parseInt(inputVal));
-	    setTime(Date.now());
-	    setGameState("play");
-	    setMemory([]);
-	  };
-
-	  const handleInputChange = e => {
-	    inputVal = e.target.value;
-	  };
-
-	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
-	    className: "display",
-	    children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
-	      children: ["You spent ", timeSpent, " milliseconds playing "]
-	    }), /*#__PURE__*/jsxRuntime.exports.jsx("input", {
-	      type: "number",
-	      defaultValue: count,
-	      id: "roundChanger",
-	      min: "1",
-	      max: "20",
-	      onChange: handleInputChange,
-	      autoFocus: true
-	    }), /*#__PURE__*/jsxRuntime.exports.jsx("button", {
-	      onClick: handleClick,
-	      autoFocus: true,
-	      children: "Play again?"
-	    })]
-	  });
-	}
-	Gameover.propTypes = {
-	  reset: propTypes.exports.PropTypes.func.isRequired,
-	  time: propTypes.exports.PropTypes.number.isRequired,
-	  count: propTypes.exports.PropTypes.number.isRequired
 	};
 
 	var reactIsExports = requireReactIs();
@@ -12455,38 +12418,239 @@
 	  });
 	};
 
-	function App(props) {
-	  const [rounds, setRounds] = react.exports.useState(1);
-	  const [count, setCount] = react.exports.useState(1);
-	  const [gameState, setGameState] = react.exports.useState("start");
-	  const [time, setTime] = react.exports.useState(null);
-	  const [memory, setMemory] = react.exports.useState([]);
+	function Gameover(props) {
+	  const {
+	    time,
+	    rounds,
+	    setRounds,
+	    setTime,
+	    setGameState,
+	    setCount,
+	    count,
+	    setMemory,
+	    clearMemory,
+	    memory,
+	    setStorage,
+	    storage
+	  } = props;
+	  const timeSpent = Date.now() - time;
+	  let inputVal = count;
+	  const keyArray = Object.keys(storage);
+	  react.exports.useEffect(() => {
+	    setStorage(memory);
+	  }, [memory]);
+
+	  const handleClick = e => {
+	    setCount(1);
+	    setRounds(Number.parseInt(inputVal));
+	    setTime(Date.now());
+	    setGameState("play");
+	    clearMemory();
+	  };
+
+	  const handleInputChange = e => {
+	    inputVal = e.target.value;
+	  };
+
 	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
-	    children: [/*#__PURE__*/jsxRuntime.exports.jsx("ul", {
-	      class: "historyDisplay",
-	      children: memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
-	      }))
-	    }), gameState === "start" && /*#__PURE__*/jsxRuntime.exports.jsx(GameStart, {
-	      rounds: rounds,
-	      setRounds: setRounds,
-	      setGameState: setGameState,
-	      setTime: setTime
-	    }), gameState === "play" && /*#__PURE__*/jsxRuntime.exports.jsx(Gameplay, {
-	      rounds: rounds,
-	      count: count,
-	      setCount: setCount,
-	      setGameState: setGameState,
-	      memory: memory,
-	      setMemory: setMemory
-	    }), gameState === "end" && /*#__PURE__*/jsxRuntime.exports.jsx(Gameover, {
-	      time: time,
-	      rounds: rounds,
-	      setRounds: setRounds,
-	      setTime: setTime,
-	      setGameState: setGameState,
-	      count: count,
-	      setCount: setCount,
-	      setMemory: setMemory
+	    className: "display",
+	    children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
+	      children: ["You spent ", timeSpent, " milliseconds playing "]
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx("input", {
+	      type: "number",
+	      defaultValue: count,
+	      id: "roundChanger",
+	      min: "1",
+	      max: "20",
+	      onChange: handleInputChange,
+	      autoFocus: true
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	      onClick: handleClick,
+	      autoFocus: true,
+	      children: "Play again?"
+	    }), keyArray.map(key => {
+	      return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
+	        children: [/*#__PURE__*/jsxRuntime.exports.jsx("p", {
+	          children: key
+	        }), storage[key].map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
+	        }))]
+	      });
+	    })]
+	  });
+	}
+	Gameover.propTypes = {
+	  reset: propTypes.exports.PropTypes.func.isRequired,
+	  time: propTypes.exports.PropTypes.number.isRequired,
+	  count: propTypes.exports.PropTypes.number.isRequired
+	};
+
+	let count = 0;
+	const changeRounds = newRounds => ({
+	  type: "changeRounds",
+	  payload: newRounds
+	});
+	const changeCount = newCount => ({
+	  type: "changeCount",
+	  payload: newCount
+	});
+	const changeGameState = newGameState => ({
+	  type: "changeGameState",
+	  payload: newGameState
+	});
+	const startTime = () => ({
+	  type: "startTime"
+	});
+	const changeMemory = memoryObject => ({
+	  type: "changeMemory",
+	  payload: memoryObject
+	});
+	const changeStorage = newArray => ({
+	  type: "changeStorage",
+	  payload: newArray
+	});
+	const resetMemory = () => ({
+	  type: "resetMemory"
+	});
+	const initializer = () => ({
+	  rounds: 3,
+	  count: 1,
+	  gameState: "start",
+	  time: null,
+	  memory: [],
+	  storage: {}
+	});
+
+	const setRounds = (state, newRounds) => ({ ...state,
+	  rounds: newRounds
+	});
+
+	const setCount = (state, newCount) => {
+	  return { ...state,
+	    count: newCount
+	  };
+	};
+
+	const setGameState = (state, newGameState) => ({ ...state,
+	  gameState: newGameState
+	});
+
+	const setTime = state => ({ ...state,
+	  time: Date.now()
+	});
+
+	const updateMemory = (state, memoryObject) => ({ ...state,
+	  memory: state.memory.concat([{ ...memoryObject
+	  }])
+	});
+
+	const clearMemory = state => ({ ...state,
+	  memory: []
+	});
+
+	const updateStorage = (state, newArray) => {
+	  count++;
+	  const key = `game${count}`;
+	  console.log(state.storage);
+	  return { ...state,
+	    storage: { ...state.storage,
+	      [key]: newArray
+	    }
+	  };
+	};
+
+	const reducer = (state, action) => {
+	  switch (action.type) {
+	    case "changeRounds":
+	      return setRounds(state, action.payload);
+
+	    case "changeCount":
+	      return setCount(state, action.payload);
+
+	    case "changeGameState":
+	      return setGameState(state, action.payload);
+
+	    case "startTime":
+	      return setTime(state);
+
+	    case "changeMemory":
+	      return updateMemory(state, action.payload);
+
+	    case "changeStorage":
+	      return updateStorage(state, action.payload);
+
+	    case "resetMemory":
+	      return clearMemory(state);
+
+	    default:
+	      throw new Error("Invalid App reducer Usage");
+	  }
+	};
+
+	function App(props) {
+	  const [state, dispatch] = react.exports.useReducer(reducer, undefined, initializer); // const [rounds, setRounds] = useState(1);
+	  // const [count, setCount] = useState(1);
+	  // const [gameState, setGameState] = useState(game.start);
+	  // const [time, setTime] = useState(null);
+	  // const [memory, setMemory] = useState([]);
+
+	  const game = {
+	    start: "start",
+	    play: "play",
+	    end: "end"
+	  };
+
+	  const setRounds = rounds => dispatch(changeRounds(rounds));
+
+	  const setGameState = gameState => dispatch(changeGameState(gameState));
+
+	  const setTime = () => dispatch(startTime());
+
+	  const setCount = newCount => dispatch(changeCount(newCount));
+
+	  const setMemory = memoryObject => dispatch(changeMemory(memoryObject));
+
+	  const clearMemory = () => dispatch(resetMemory());
+
+	  const setStorage = memory => dispatch(changeStorage(memory));
+
+	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
+	    children: [state.gameState === game.start && /*#__PURE__*/jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, {
+	      children: /*#__PURE__*/jsxRuntime.exports.jsx(GameStart, {
+	        rounds: state.rounds,
+	        setRounds: setRounds,
+	        setGameState: setGameState,
+	        setTime: setTime
+	      })
+	    }), state.gameState === game.play && /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
+	      children: [/*#__PURE__*/jsxRuntime.exports.jsx(Gameplay, {
+	        rounds: state.rounds,
+	        count: state.count,
+	        setCount: setCount,
+	        setGameState: setGameState,
+	        memory: state.memory,
+	        setMemory: setMemory,
+	        setStorage: setStorage
+	      }), /*#__PURE__*/jsxRuntime.exports.jsx("div", {
+	        className: "historyDisplay",
+	        children: state.memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
+	        }))
+	      })]
+	    }), state.gameState === game.end && /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
+	      children: [/*#__PURE__*/jsxRuntime.exports.jsx(Gameover, {
+	        time: state.time,
+	        rounds: state.rounds,
+	        setRounds: setRounds,
+	        setTime: setTime,
+	        setGameState: setGameState,
+	        count: state.count,
+	        setCount: setCount,
+	        setMemory: setMemory,
+	        clearMemory: clearMemory,
+	        memory: state.memory,
+	        setStorage: setStorage,
+	        storage: state.storage,
+	        keyArray: state.keyArray
+	      }), /*#__PURE__*/jsxRuntime.exports.jsx("div", {})]
 	    })]
 	  });
 	}

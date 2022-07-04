@@ -1,79 +1,134 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useReducer, useContext} from "react";
 import {PropTypes} from "prop-types";
 import { signsRef, evaluate } from "../utils/signs";
+import useReducerWithMiddleware from "../hooks/useReducerWithMiddleware";
+import LoggingMiddleware from "../loggingMiddleware";
+import {
+    reducer, 
+    changeSign,
+    changeFirstNum,
+    changeSecondNum,
+    changeSkipUse,
+    toggleRequest,
+    createPostSucceeded,
+    answerPostSucceeded,
+    initializer
+} from "../logicContainers/gamePlayReducer";
+import { ServerContext } from "../ServerContext";
 
 export function Gameplay(props) {
-const { count, rounds, setCount, setGameState, memory, setMemory, setStorage} = props;
+const { state, setCount, setGameState, setMemory } = props;
+const {rounds} = state;
 
-const [sign, setSign] = useState(null);
-const [firstNum, setFirstNum] = useState(null);
-const [secondNum, setSecondNum] = useState(null);
-const [skipUse, setSkipUse] = useState(0);
+const server = useContext(ServerContext);
+// const [subState, dispatchSub] = useReducer(reducer, undefined, initializer);
+const [subState, dispatchSub] = useReducerWithMiddleware([LoggingMiddleware], reducer, undefined, initializer);
 const time = Date.now();
-useEffect(() => {
-    generateExpression(); 
-}, []);
-const generateExpression = () => {
-    setSign(signsRef[Math.floor(Math.random() * signsRef.length)]);
-    setFirstNum(Math.floor(Math.random() * 20));
-    setSecondNum(Math.floor(Math.random() * 20));
-};
 
+const setSign = (sign) => dispatchSub(changeSign(sign));
+const setFirstNum = (newFirstNum) => dispatchSub(changeFirstNum(newFirstNum));
+const setSecondNum = (newSecondNum) => dispatchSub(changeSecondNum(newSecondNum));
+const setSkipUse = (newSkipUse) => dispatchSub(changeSkipUse(newSkipUse));
+const setRequestState = (requestState) => dispatchSub(toggleRequest(requestState));
+const createSucceeded = (gameObject) => dispatchSub(createPostSucceeded(gameObject));
+const answerSucceeded = (gameObject) => dispatchSub(answerPostSucceeded(gameObject));
+
+useEffect(() => { 
+    if (!subState.requestState.inFlight) {
+        setRequestState({inFlight: true, error: "flyer"});
+        server.createGame("mathemagician", rounds).then(
+            (response) => {
+                createSucceeded(response);
+                setRequestState({inFlight: false, error: null});
+            }
+        ).catch( 
+            (error) => {
+                setRequestState({inFlight: false, error: error.message});
+            }
+        );
+    }
+}, []);
 const handleSubmit = (e) => {
     e.preventDefault();
-}
+};
 
 const skip = () => {
-    setSkipUse(skipUse + 1);
-    setCount(count + 1);
-    generateExpression();
+    setRequestState({inFlight: true, error: null});
+            server.answerGame(subState.id, "skip").then(
+            (response) => {
+                answerSucceeded(response);
+                setRequestState({inFlight: false, error: null});
+            }
+        ).catch( 
+            (error) => {
+                setRequestState({inFlight: false, error: error.message});
+            }
+        );
 };
 
 const handleInputChange=(e) => {
-    const answer = evaluate(firstNum, secondNum, sign);
-    const input = Number.parseInt(e.target.value);
-    if (answer.toString().length === input.toString().length && count < rounds) {
-        setMemory({
-            firstNum: firstNum,
-            secondNum: secondNum,
-            answer: answer,
-            sign: sign,
-            value: input,
-            time: Date.now()-time,
-            speed: Math.floor((Date.now()-time)/1000) < 3
-        });
-        e.target.value = "";
-        setCount(count + 1);
-        generateExpression();
-    } else if (answer.toString().length === input.toString().length && count == rounds) {
-        setMemory({
-            firstNum: firstNum,
-            secondNum: secondNum,
-            answer: answer,
-            sign: sign,
-            value: input,
-            time: Date.now()-time,
-            speed: Math.floor((Date.now()-time)/1000) < 3
-        });
-        setSkipUse(0);
-        setGameState("end");
+    if (!subState.requestState.inFlight) {
+        const answer = evaluate(subState.firstNum, subState.secondNum, subState.sign);
+        const input = Number.parseInt(e.target.value);
+        if (subState.CAL === input.toString().length) {
+            // setMemory({
+            //     firstNum: subState.firstNum,
+            //     secondNum: subState.secondNum,
+            //     answer: answer,
+            //     sign: subState.sign,
+            //     value: input,
+            //     time: Date.now()-time,
+            //     speed: Math.floor((Date.now()-time)/1000) < 3
+            // });
+            e.target.value = "";
+            setRequestState({inFlight: true, error: null});
+            server.answerGame(subState.id, input).then(
+            (response) => {
+                setMemory({
+                    firstNum: subState.firstNum,
+                    secondNum: subState.secondNum,
+                    answer: response.move.correct,
+                    sign: subState.sign,
+                    value: input,
+                    time: response.move.timeSpentMillis,
+                    speed: Math.floor(response.move.timeSpentMillis/1000) < 3
+                });
+                if (response.game.nextExpression === null) {
+                    setGameState("end");
+                    return;
+                }
+                answerSucceeded(response);
+                setRequestState({inFlight: false, error: null});
+            }
+            ).catch( 
+                (error) => {
+                    setRequestState({inFlight: false, error: error.message});
+                }
+            );
+        }
     }
 };
-
-    return (
+        return (
         <div className="display">
-            <p>{firstNum} {sign} {secondNum}</p>
+
+           { subState.error != null ? 
+            <p>ERROR!!</p> : subState.requestState.inFlight ? <p>Loading...</p> :
+            <>
+            <p>{subState.firstNum} {subState.sign} {subState.secondNum}</p>
             <form onSubmit={handleSubmit}>
                 <input type="number" onChange={handleInputChange} autoFocus />
             </form>
-           {skipUse < Math.floor(rounds/3) ? <button onClick={skip} >Skip</button> : null}
+           {subState.skipUse > 0 ? <button onClick={skip} >Skip</button> : null }
+           </>}
+ 
         </div>
     );
 }
 
 Gameplay.propTypes = {
-    rounds: PropTypes.number.isRequired,
-    count: PropTypes.number.isRequired,
+    state: PropTypes.object.isRequired,
     setCount: PropTypes.func.isRequired,
-    setGameState: PropTypes.func.isRequired
+    setGameState: PropTypes.func.isRequired,
+    setStorage: PropTypes.func.isRequired,
+    setMemory: PropTypes.func.isRequired
 };

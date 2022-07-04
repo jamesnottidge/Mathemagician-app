@@ -1,5 +1,3 @@
-
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 (function () {
 	'use strict';
 
@@ -10713,11 +10711,14 @@
 
 	function GameStart(props) {
 	  const {
-	    rounds,
+	    state,
 	    setRounds,
 	    setGameState,
 	    setTime
 	  } = props;
+	  const {
+	    rounds
+	  } = state;
 
 	  const handleClick = () => {
 	    setGameState("play");
@@ -10725,7 +10726,7 @@
 	  };
 
 	  const handleChange = e => {
-	    setRounds(e.target.value);
+	    setRounds(Number.parseInt(e.target.value));
 	  };
 
 	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
@@ -10748,12 +10749,9 @@
 	  });
 	}
 	GameStart.propTypes = {
-	  rounds: propTypes.exports.PropTypes.number.isRequired,
-	  changeMode: propTypes.exports.PropTypes.func.isRequired,
-	  changeRounds: propTypes.exports.PropTypes.func.isRequired
+	  state: propTypes.exports.PropTypes.object.isRequired
 	};
 
-	const signsRef = ["+", "*", "-"];
 	const evaluate = (firstNum, secondNum, sign) => {
 	  switch (sign) {
 	    case "+":
@@ -10770,95 +10768,345 @@
 	  }
 	};
 
+	/**
+	 * Same as React's useReducer, but also executes middleware functions on every
+	 * action dispatch.
+	 *
+	 * A middleware is a powerful and flexible function that can
+	 * - dispatch arbitrary actions, e.g. at an interval
+	 * - inspect all the dispatched actions
+	 * - change an action before it reaches the reducer or next middleware
+	 * - stop an action from propagating altogether
+	 *
+	 * The middleware interface is designed to be exactly the same as Redux's
+	 * middlewares - the middleware function must have the following form:
+	 ```js
+	  ({getState}) => {
+	    return (next) =>
+	      return (action) => {
+	        next(action);
+	      }
+	    }
+	  }
+	 ```
+	 * A middleware function must call `next(action)` to propagate the action to
+	 * the final action dispatch and reducer, otherwise the action will be ignored.
+	 *
+	 * Middlewares are executed in reverse order.
+	 *
+	 * @param {Array<Function>} middlewares Middleware functions, executed in reverse order
+	 * @param {Function} reducer Passed to React's useReducer
+	 * @param {any} initOrInitialValue Passed to React's useReducer
+	 * @param {any} init Passed to React's useReducer
+	 * @return {Array} of [state, dispatch]
+	 */
+
+	const useReducerWithMiddleware = (middlewares, reducer, initOrInitialValue, init) => {
+	  /*
+	   * In order to give access to last state to middleware functions, need to
+	   * provide them a value which itself doesn't change to avoid constantly
+	   * re-defining the middlewares. `useRef` provides just the "box" which we can
+	   * mutate for this purpose.
+	   */
+	  const lastStateRef = react.exports.useRef(); // `useMemo` will be discussed in next lecture
+
+	  const refUpdatingReducer = react.exports.useMemo(() => (prevState, action) => {
+	    const newState = reducer(prevState, action);
+	    lastStateRef.current = newState;
+	    return newState;
+	  }, [lastStateRef]);
+	  const [state, dispatch] = react.exports.useReducer(refUpdatingReducer, initOrInitialValue, init);
+	  const dispatchWithMiddlewares = react.exports.useMemo(() => {
+	    const middlewareInit = {
+	      getStateBefore: () => lastStateRef.current
+	    };
+	    return middlewares.concat(dispatch).reverse().reduce((acc, middleware) => {
+	      /*
+	       * Initialize the middleware with means to get state and the next
+	       * middleware/final dispatch.
+	       */
+	      return middleware(middlewareInit)(acc);
+	    });
+	  }, [middlewares, dispatch, lastStateRef]);
+	  return [state, dispatchWithMiddlewares];
+	};
+
+	const LoggingMiddleware = _ref => {
+	  let {
+	    getStateBefore
+	  } = _ref;
+	  // Initialization code if any goes here
+	  let time;
+	  return next => {
+	    return action => {
+	      const stateBefore = getStateBefore();
+
+	      if (!stateBefore) {
+	        localStorage.setItem('time', Date.now());
+	      } else if (action.type === "toggleRequest" && !stateBefore.requestState.inFlight) {
+	        localStorage.setItem('time', Date.now());
+	      } else if (action.type === "toggleRequest" && stateBefore.requestState.inFlight) {
+	        time = localStorage.getItem("time");
+	        console.log(Date.now() - time);
+	      } // eslint-disable-next-line no-console
+
+
+	      console.log("Dispatching action", action, "while state is", stateBefore);
+	      /*
+	       * Delegate to the next middleware or finally - the action dispatch
+	       */
+
+	      next(action);
+	      /*
+	       *
+	       * One crucial different to Redux's middlewares is that as React can
+	       * delay calling the reducer for internal optimizations, calling
+	       * `next(action)` does not immediately call the reducer and thus there is
+	       * no way to get "post-action" state in the middleware function.
+	       */
+	    };
+	  };
+	};
+
+	const toggleRequest = requestState => ({
+	  type: "toggleRequest",
+	  payload: requestState
+	});
+	const createPostSucceeded = gameObject => ({
+	  type: "createPostSucceeded",
+	  payload: gameObject
+	});
+	const answerPostSucceeded = gameObject => ({
+	  type: "answerPostSucceeded",
+	  payload: gameObject
+	});
+	const initializer$1 = () => ({
+	  id: null,
+	  sign: null,
+	  firstNum: null,
+	  secondNum: null,
+	  skipUse: 0,
+	  CAL: 0,
+	  requestState: {
+	    inFlight: false,
+	    error: null
+	  }
+	});
+
+	const setRequestState = (state, requestState) => {
+	  // console.log("James the flyer");
+	  return { ...state,
+	    requestState: requestState
+	  };
+	};
+
+	const createGame$1 = (state, gameObject) => ({ ...state,
+	  id: gameObject.id,
+	  sign: gameObject.nextExpression.operator,
+	  firstNum: gameObject.nextExpression.lhs,
+	  secondNum: gameObject.nextExpression.rhs,
+	  skipUse: gameObject.skipsRemaining,
+	  CAL: gameObject.nextExpression.correctAnswerLength
+	});
+
+	const answerGame$1 = (state, gameObject) => ({ ...state,
+	  firstNum: gameObject.game.nextExpression.lhs,
+	  secondNum: gameObject.game.nextExpression.rhs,
+	  sign: gameObject.game.nextExpression.operator,
+	  skipUse: gameObject.game.skipsRemaining,
+	  CAL: gameObject.game.nextExpression.correctAnswerLength
+	});
+
+	const setSign = (state, newSign) => ({ ...state,
+	  sign: newSign
+	});
+
+	const setFirstNum = (state, newFirstNum) => ({ ...state,
+	  firstNum: newFirstNum
+	});
+
+	const setSecondNum = (state, newSecondNum) => ({ ...state,
+	  secondNum: newSecondNum
+	});
+
+	const setSkipuse = (state, newSkipuse) => ({ ...state,
+	  skipUse: newSkipuse
+	});
+
+	const reducer$1 = (state, action) => {
+	  switch (action.type) {
+	    case "changeSign":
+	      return setSign(state, action.payload);
+
+	    case "changeFirstNum":
+	      return setFirstNum(state, action.payload);
+
+	    case "changeSecondNum":
+	      return setSecondNum(state, action.payload);
+
+	    case "changeSkipUse":
+	      return setSkipuse(state, action.payload);
+
+	    case "createPostSucceeded":
+	      return createGame$1(state, action.payload);
+
+	    case "toggleRequest":
+	      return setRequestState(state, action.payload);
+
+	    case "answerPostSucceeded":
+	      return answerGame$1(state, action.payload);
+
+	    default:
+	      throw new Error("Invalid gameplay reducer usage");
+	  }
+	};
+
+	const ServerContext = /*#__PURE__*/react.exports.createContext(null);
+
 	function Gameplay(props) {
 	  const {
-	    count,
-	    rounds,
+	    state,
 	    setCount,
 	    setGameState,
-	    memory,
-	    setMemory,
-	    setStorage
+	    setMemory
 	  } = props;
-	  const [sign, setSign] = react.exports.useState(null);
-	  const [firstNum, setFirstNum] = react.exports.useState(null);
-	  const [secondNum, setSecondNum] = react.exports.useState(null);
-	  const [skipUse, setSkipUse] = react.exports.useState(0);
-	  const time = Date.now();
-	  react.exports.useEffect(() => {
-	    generateExpression();
-	  }, []);
+	  const {
+	    rounds
+	  } = state;
+	  const server = react.exports.useContext(ServerContext); // const [subState, dispatchSub] = useReducer(reducer, undefined, initializer);
 
-	  const generateExpression = () => {
-	    setSign(signsRef[Math.floor(Math.random() * signsRef.length)]);
-	    setFirstNum(Math.floor(Math.random() * 20));
-	    setSecondNum(Math.floor(Math.random() * 20));
-	  };
+	  const [subState, dispatchSub] = useReducerWithMiddleware([LoggingMiddleware], reducer$1, undefined, initializer$1);
+
+	  const setRequestState = requestState => dispatchSub(toggleRequest(requestState));
+
+	  const createSucceeded = gameObject => dispatchSub(createPostSucceeded(gameObject));
+
+	  const answerSucceeded = gameObject => dispatchSub(answerPostSucceeded(gameObject));
+
+	  react.exports.useEffect(() => {
+	    if (!subState.requestState.inFlight) {
+	      setRequestState({
+	        inFlight: true,
+	        error: "flyer"
+	      });
+	      server.createGame("mathemagician", rounds).then(response => {
+	        createSucceeded(response);
+	        setRequestState({
+	          inFlight: false,
+	          error: null
+	        });
+	      }).catch(error => {
+	        setRequestState({
+	          inFlight: false,
+	          error: error.message
+	        });
+	      });
+	    }
+	  }, []);
 
 	  const handleSubmit = e => {
 	    e.preventDefault();
 	  };
 
 	  const skip = () => {
-	    setSkipUse(skipUse + 1);
-	    setCount(count + 1);
-	    generateExpression();
+	    setRequestState({
+	      inFlight: true,
+	      error: null
+	    });
+	    server.answerGame(subState.id, "skip").then(response => {
+	      answerSucceeded(response);
+	      setRequestState({
+	        inFlight: false,
+	        error: null
+	      });
+	    }).catch(error => {
+	      setRequestState({
+	        inFlight: false,
+	        error: error.message
+	      });
+	    });
 	  };
 
 	  const handleInputChange = e => {
-	    const answer = evaluate(firstNum, secondNum, sign);
-	    const input = Number.parseInt(e.target.value);
+	    if (!subState.requestState.inFlight) {
+	      evaluate(subState.firstNum, subState.secondNum, subState.sign);
+	      const input = Number.parseInt(e.target.value);
 
-	    if (answer.toString().length === input.toString().length && count < rounds) {
-	      setMemory({
-	        firstNum: firstNum,
-	        secondNum: secondNum,
-	        answer: answer,
-	        sign: sign,
-	        value: input,
-	        time: Date.now() - time,
-	        speed: Math.floor((Date.now() - time) / 1000) < 3
-	      });
-	      e.target.value = "";
-	      setCount(count + 1);
-	      generateExpression();
-	    } else if (answer.toString().length === input.toString().length && count == rounds) {
-	      setMemory({
-	        firstNum: firstNum,
-	        secondNum: secondNum,
-	        answer: answer,
-	        sign: sign,
-	        value: input,
-	        time: Date.now() - time,
-	        speed: Math.floor((Date.now() - time) / 1000) < 3
-	      });
-	      setSkipUse(0);
-	      setGameState("end");
+	      if (subState.CAL === input.toString().length) {
+	        // setMemory({
+	        //     firstNum: subState.firstNum,
+	        //     secondNum: subState.secondNum,
+	        //     answer: answer,
+	        //     sign: subState.sign,
+	        //     value: input,
+	        //     time: Date.now()-time,
+	        //     speed: Math.floor((Date.now()-time)/1000) < 3
+	        // });
+	        e.target.value = "";
+	        setRequestState({
+	          inFlight: true,
+	          error: null
+	        });
+	        server.answerGame(subState.id, input).then(response => {
+	          setMemory({
+	            firstNum: subState.firstNum,
+	            secondNum: subState.secondNum,
+	            answer: response.move.correct,
+	            sign: subState.sign,
+	            value: input,
+	            time: response.move.timeSpentMillis,
+	            speed: Math.floor(response.move.timeSpentMillis / 1000) < 3
+	          });
+
+	          if (response.game.nextExpression === null) {
+	            setGameState("end");
+	            return;
+	          }
+
+	          answerSucceeded(response);
+	          setRequestState({
+	            inFlight: false,
+	            error: null
+	          });
+	        }).catch(error => {
+	          setRequestState({
+	            inFlight: false,
+	            error: error.message
+	          });
+	        });
+	      }
 	    }
 	  };
 
-	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
+	  return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
 	    className: "display",
-	    children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
-	      children: [firstNum, " ", sign, " ", secondNum]
-	    }), /*#__PURE__*/jsxRuntime.exports.jsx("form", {
-	      onSubmit: handleSubmit,
-	      children: /*#__PURE__*/jsxRuntime.exports.jsx("input", {
-	        type: "number",
-	        onChange: handleInputChange,
-	        autoFocus: true
-	      })
-	    }), skipUse < Math.floor(rounds / 3) ? /*#__PURE__*/jsxRuntime.exports.jsx("button", {
-	      onClick: skip,
-	      children: "Skip"
-	    }) : null]
+	    children: subState.error != null ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
+	      children: "ERROR!!"
+	    }) : subState.requestState.inFlight ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
+	      children: "Loading..."
+	    }) : /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
+	      children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
+	        children: [subState.firstNum, " ", subState.sign, " ", subState.secondNum]
+	      }), /*#__PURE__*/jsxRuntime.exports.jsx("form", {
+	        onSubmit: handleSubmit,
+	        children: /*#__PURE__*/jsxRuntime.exports.jsx("input", {
+	          type: "number",
+	          onChange: handleInputChange,
+	          autoFocus: true
+	        })
+	      }), subState.skipUse > 0 ? /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	        onClick: skip,
+	        children: "Skip"
+	      }) : null]
+	    })
 	  });
 	}
 	Gameplay.propTypes = {
-	  rounds: propTypes.exports.PropTypes.number.isRequired,
-	  count: propTypes.exports.PropTypes.number.isRequired,
+	  state: propTypes.exports.PropTypes.object.isRequired,
 	  setCount: propTypes.exports.PropTypes.func.isRequired,
-	  setGameState: propTypes.exports.PropTypes.func.isRequired
+	  setGameState: propTypes.exports.PropTypes.func.isRequired,
+	  setStorage: propTypes.exports.PropTypes.func.isRequired,
+	  setMemory: propTypes.exports.PropTypes.func.isRequired
 	};
 
 	var reactIsExports = requireReactIs();
@@ -12392,7 +12640,7 @@
     padding: 1.5rem;
     border-radius: 0.8rem;
     color: ${props => props.speed ? "green" : "orange"};
-    color: ${props => props.value !== props.answer ? "red" : ""};
+    color: ${props => !props.answer ? "red" : ""};
     background-color: rgba(222, 165, 78, 0.501);
 `;
 
@@ -12409,7 +12657,7 @@
 	  return /*#__PURE__*/jsxRuntime.exports.jsxs(StyledHistory, {
 	    value: value,
 	    answer: answer,
-	    speed: speed,
+	    $speed: speed,
 	    children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
 	      children: [firstNum, " ", sign, " ", secondNum, " [", time, "]"]
 	    }), /*#__PURE__*/jsxRuntime.exports.jsx("p", {
@@ -12420,19 +12668,20 @@
 
 	function Gameover(props) {
 	  const {
-	    time,
-	    rounds,
 	    setRounds,
 	    setTime,
 	    setGameState,
 	    setCount,
-	    count,
-	    setMemory,
 	    clearMemory,
-	    memory,
 	    setStorage,
-	    storage
+	    state
 	  } = props;
+	  const {
+	    time,
+	    count,
+	    memory,
+	    storage
+	  } = state;
 	  const timeSpent = Date.now() - time;
 	  let inputVal = count;
 	  const keyArray = Object.keys(storage);
@@ -12479,9 +12728,12 @@
 	  });
 	}
 	Gameover.propTypes = {
-	  reset: propTypes.exports.PropTypes.func.isRequired,
-	  time: propTypes.exports.PropTypes.number.isRequired,
-	  count: propTypes.exports.PropTypes.number.isRequired
+	  state: propTypes.exports.PropTypes.object.isRequired,
+	  setCount: propTypes.exports.PropTypes.func.isRequired,
+	  setGameState: propTypes.exports.PropTypes.func.isRequired,
+	  setStorage: propTypes.exports.PropTypes.func.isRequired,
+	  clearMemory: propTypes.exports.PropTypes.func.isRequired,
+	  setTime: propTypes.exports.PropTypes.func.isRequired
 	};
 
 	let count = 0;
@@ -12550,7 +12802,6 @@
 	const updateStorage = (state, newArray) => {
 	  count++;
 	  const key = `game${count}`;
-	  console.log(state.storage);
 	  return { ...state,
 	    storage: { ...state.storage,
 	      [key]: newArray
@@ -12586,13 +12837,50 @@
 	  }
 	};
 
-	function App(props) {
-	  const [state, dispatch] = react.exports.useReducer(reducer, undefined, initializer); // const [rounds, setRounds] = useState(1);
-	  // const [count, setCount] = useState(1);
-	  // const [gameState, setGameState] = useState(game.start);
-	  // const [time, setTime] = useState(null);
-	  // const [memory, setMemory] = useState([]);
+	const SERVER_ADDRESS = "http://localhost:8081";
 
+	const parse = async fetchPromise => {
+	  const response = await fetchPromise;
+
+	  if (response.ok) {
+	    return await response.json();
+	  } else {
+	    throw new Error((await response.json()).error);
+	  }
+	};
+
+	const createGame = (type, rounds) => {
+	  return parse(fetch(SERVER_ADDRESS + "/games", {
+	    method: "POST",
+	    headers: {
+	      "content-type": "application/json"
+	    },
+	    body: JSON.stringify({
+	      type: type,
+	      rounds: rounds
+	    })
+	  }));
+	};
+	const answerGame = (id, guess) => {
+	  return parse(fetch(SERVER_ADDRESS + `/games/${id}/moves`, {
+	    method: "POST",
+	    headers: {
+	      "content-type": "application/json"
+	    },
+	    body: JSON.stringify({
+	      guess: guess
+	    })
+	  }));
+	};
+	const createServer = () => {
+	  return {
+	    createGame: (type, rounds) => createGame(type, rounds),
+	    answerGame: (id, guess) => answerGame(id, guess)
+	  };
+	};
+
+	function App(props) {
+	  const [state, dispatch] = react.exports.useReducer(reducer, undefined, initializer);
 	  const game = {
 	    start: "start",
 	    play: "play",
@@ -12613,45 +12901,38 @@
 
 	  const setStorage = memory => dispatch(changeStorage(memory));
 
-	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
-	    children: [state.gameState === game.start && /*#__PURE__*/jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, {
-	      children: /*#__PURE__*/jsxRuntime.exports.jsx(GameStart, {
-	        rounds: state.rounds,
+	  return /*#__PURE__*/jsxRuntime.exports.jsx(ServerContext.Provider, {
+	    value: createServer(),
+	    children: /*#__PURE__*/jsxRuntime.exports.jsxs("main", {
+	      children: [state.gameState === game.start && /*#__PURE__*/jsxRuntime.exports.jsx(GameStart, {
+	        state: state,
 	        setRounds: setRounds,
 	        setGameState: setGameState,
 	        setTime: setTime
-	      })
-	    }), state.gameState === game.play && /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
-	      children: [/*#__PURE__*/jsxRuntime.exports.jsx(Gameplay, {
-	        rounds: state.rounds,
-	        count: state.count,
-	        setCount: setCount,
-	        setGameState: setGameState,
-	        memory: state.memory,
-	        setMemory: setMemory,
-	        setStorage: setStorage
-	      }), /*#__PURE__*/jsxRuntime.exports.jsx("div", {
-	        className: "historyDisplay",
-	        children: state.memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
-	        }))
+	      }), state.gameState === game.play && /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
+	        children: [/*#__PURE__*/jsxRuntime.exports.jsx(Gameplay, {
+	          state: state,
+	          setCount: setCount,
+	          setGameState: setGameState,
+	          setMemory: setMemory,
+	          setStorage: setStorage
+	        }), /*#__PURE__*/jsxRuntime.exports.jsx("aside", {
+	          className: "historyDisplay",
+	          children: state.memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
+	          }))
+	        })]
+	      }), state.gameState === game.end && /*#__PURE__*/jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, {
+	        children: /*#__PURE__*/jsxRuntime.exports.jsx(Gameover, {
+	          setRounds: setRounds,
+	          setTime: setTime,
+	          setGameState: setGameState,
+	          setCount: setCount,
+	          clearMemory: clearMemory,
+	          setStorage: setStorage,
+	          state: state
+	        })
 	      })]
-	    }), state.gameState === game.end && /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
-	      children: [/*#__PURE__*/jsxRuntime.exports.jsx(Gameover, {
-	        time: state.time,
-	        rounds: state.rounds,
-	        setRounds: setRounds,
-	        setTime: setTime,
-	        setGameState: setGameState,
-	        count: state.count,
-	        setCount: setCount,
-	        setMemory: setMemory,
-	        clearMemory: clearMemory,
-	        memory: state.memory,
-	        setStorage: setStorage,
-	        storage: state.storage,
-	        keyArray: state.keyArray
-	      }), /*#__PURE__*/jsxRuntime.exports.jsx("div", {})]
-	    })]
+	    })
 	  });
 	}
 

@@ -10,6 +10,6 @@ export const StyledHistory = styled.li`
     padding: 1.5rem;
     border-radius: 0.8rem;
     color: ${(props) => props.speed ? "green" : "orange"};
-    color: ${(props) => props.value!==props.answer? "red" : ""};
+    color: ${(props) => !props.answer? "red" : ""};
     background-color: rgba(222, 165, 78, 0.501);
 `;

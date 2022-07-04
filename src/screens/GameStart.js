@@ -2,7 +2,9 @@ import {PropTypes} from "prop-types";
 
 export function GameStart(props) {
 
-const { rounds, setRounds, setGameState, setTime } = props;
+const { state, setRounds, setGameState, setTime } = props;
+
+const { rounds } = state;
 
     const handleClick = () => {
         setGameState("play");
@@ -10,8 +12,8 @@ const { rounds, setRounds, setGameState, setTime } = props;
     };
 
     const handleChange=(e)=>{
-        setRounds(e.target.value);
-    }
+        setRounds(Number.parseInt(e.target.value));
+    };
     return (
         <div className="display">
             <p>Hi, this is James' math game, choose your parameters and get to calculating!</p>
@@ -25,7 +27,5 @@ const { rounds, setRounds, setGameState, setTime } = props;
 }
 
 GameStart.propTypes = {
-    rounds: PropTypes.number.isRequired,
-    changeMode: PropTypes.func.isRequired,
-    changeRounds: PropTypes.func.isRequired
+   state: PropTypes.object.isRequired
 };

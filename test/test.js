@@ -12,7 +12,7 @@ describe('App', () => {
     it('renders App component', () => {
         render(<App />);
 
-        screen.debug();
+        // screen.debug();
     });
 });
 
@@ -20,7 +20,7 @@ describe('History', () => {
     it('renders History component', () => {
         render(<History />);
 
-        screen.debug();
+        // screen.debug();
     });
 });
 
@@ -28,7 +28,7 @@ describe('Gameplay', () => {
     it('renders Gameplay screen', () => {
         render(<Gameplay />);
 
-        screen.debug();
+       // screen.debug();
     });
 });
 
@@ -36,7 +36,7 @@ describe('GameStart', () => {
     it('renders Gamestart screen', () => {
         render(<GameStart />);
 
-        screen.debug();
+        // screen.debug();
     });
 });
 
@@ -45,7 +45,7 @@ describe('Gameover', () => {
     it('renders Gameover screen', () => {
         render(<Gameover />);
 
-        screen.debug();
+       // screen.debug();
     });
 });
 

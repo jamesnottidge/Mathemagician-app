@@ -1,10 +1,11 @@
 import {PropTypes} from "prop-types";
 import { useEffect } from "react";
-import { History } from "../components/History" 
+import { History } from "../components/History";
 
 export function Gameover(props) {
 
-    const { time, rounds, setRounds, setTime, setGameState, setCount, count, setMemory, clearMemory, memory, setStorage, storage} = props;
+    const { setRounds, setTime, setGameState, setCount, clearMemory, setStorage, state } = props;
+    const { time, count, memory, storage } = state;
     const timeSpent = Date.now()-time;
     let inputVal=count; 
     const keyArray=Object.keys(storage);
@@ -21,7 +22,7 @@ export function Gameover(props) {
 
     const handleInputChange = (e) => {
         inputVal = e.target.value; 
-    }
+    };
     return (
         <div className="display">
             <p>You spent {timeSpent} milliseconds playing </p>
@@ -42,8 +43,10 @@ export function Gameover(props) {
 
 
 Gameover.propTypes = {
-    reset: PropTypes.func.isRequired,
-    time: PropTypes.number.isRequired,
-    count: PropTypes.number.isRequired,
-    
+    state: PropTypes.object.isRequired,
+    setCount: PropTypes.func.isRequired,
+    setGameState: PropTypes.func.isRequired,
+    setStorage: PropTypes.func.isRequired,
+    clearMemory: PropTypes.func.isRequired,
+    setTime: PropTypes.func.isRequired
 };

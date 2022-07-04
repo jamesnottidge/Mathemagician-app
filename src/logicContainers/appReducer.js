@@ -76,7 +76,6 @@ const clearMemory = (state) => ({
 const updateStorage = (state, newArray) => {
     count++;
     const key = `game${count}`;
-    console.log(state.storage);
     return {
     ...state,
     storage: {

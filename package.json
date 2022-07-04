@@ -21,9 +21,12 @@
     "eslint-plugin-import": "^2.26.0",
     "global-jsdom": "8.4.0",
     "http-server": "^14.1.0",
+    "jest": "^28.1.2",
+    "jest-environment-jsdom": "^28.1.2",
     "jsdom-global": "^3.0.2",
     "mocha": "^10.0.0",
     "mocha-jsdom": "^2.0.0",
+    "nyc": "^15.1.0",
     "postcss": "^8.4.14",
     "postcss-import": "^14.1.0",
     "rollup": "^2.74.0",
@@ -35,13 +38,15 @@
     "build": "rollup -c",
     "build:watch": "rollup -c -w",
     "lint": "eslint src/",
-    "test": "mocha",
-    "test:watch": "mocha -w"
+    "test": "jest",
+    "test:watch": "mocha -w",
+    "test:coverage": "nyc yarn test"
   },
   "resolutions": {
     "styled-components": "^5"
   },
   "dependencies": {
+    "game_lobby_server": "^1.4.0",
     "jsdom": "^19.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.1.0",

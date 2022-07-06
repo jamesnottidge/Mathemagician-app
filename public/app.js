@@ -11081,7 +11081,7 @@
 	  return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
 	    className: "display",
 	    children: subState.error != null ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
-	      children: "ERROR!!"
+	      children: " ERROR!!"
 	    }) : subState.requestState.inFlight ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
 	      children: "Loading..."
 	    }) : /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
@@ -12874,8 +12874,8 @@
 	};
 	const createServer = () => {
 	  return {
-	    createGame: (type, rounds) => createGame(type, rounds),
-	    answerGame: (id, guess) => answerGame(id, guess)
+	    createGame,
+	    answerGame
 	  };
 	};
 

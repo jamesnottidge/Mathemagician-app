@@ -15,7 +15,7 @@ import {
     resetMemory,
     initializer
 } from "./logicContainers/appReducer";
-import { createServer } from "./ServerAPI";
+import { createServer } from "./ServerAPI.js";
 import { ServerContext } from "./ServerContext";
 export function App(props) {
     const [state, dispatch] = useReducer(reducer, undefined, initializer);

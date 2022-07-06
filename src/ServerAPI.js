@@ -38,7 +38,7 @@ export const answerGame = (id, guess) => {
 
 export const createServer = () => {
     return {
-        createGame: (type, rounds) => createGame(type, rounds),
-        answerGame: (id, guess) => answerGame(id, guess)
+        createGame,
+        answerGame
     };
 };

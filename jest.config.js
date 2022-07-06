@@ -1,4 +1,6 @@
 module.exports = {
+    'setupFilesAfterEnv': ['./setupJest.js'],
+    "transform": {"^.+\\.(js|jsx)$": "babel-jest"},
     // The pattern or patterns Jest uses to detect test files
     "testRegex": "./test/.*.js$",
   
@@ -16,5 +18,7 @@ module.exports = {
   
     // The test environment that will be used for testing
     "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": ['<rootDir>/jest-setup.js']
+   // "setupFilesAfterEnv": ['<rootDir>/jest-setup.js']
   };
+
+

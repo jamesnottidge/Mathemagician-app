@@ -112,7 +112,7 @@ const handleInputChange=(e) => {
         <div className="display">
 
            { subState.error != null ? 
-            <p>ERROR!!</p> : subState.requestState.inFlight ? <p>Loading...</p> :
+            <p> ERROR!!</p> : subState.requestState.inFlight ? <p>Loading...</p> :
             <>
             <p>{subState.firstNum} {subState.sign} {subState.secondNum}</p>
             <form onSubmit={handleSubmit}>

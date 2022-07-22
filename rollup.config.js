@@ -37,7 +37,7 @@ export default {
 
   ].concat(
       watching? [
-        serve({contentBase: outputFolder, open: true}),
+        serve({contentBase: outputFolder, open: true, historyApiFallback: true}),
         livereload({watch: 'public'})
       ]:[]
   )

@@ -6,17 +6,15 @@ import nock from 'nock';
 import { createServer } from "../src/FakeServerAPI";
 import { ServerContext } from "../src/ServerContext";
 import { App} from "../src/App"; 
-// import fetch from "node-fetch";
 import fetchMock from "jest-fetch-mock";
+import { createMockWebSocketInterface } from "../src/FakeWebSocket";
 fetchMock.enableMocks();
 
 describe('play the Game', () => {
-//   const scope = () => nock("http://localhost:8081").persist().post("/games").reply(201, fakeGameObject);
-
 
     afterEach(cleanup);
 
-    describe('when', () => {
+    describe('An integraton test for the entire game', () => {
        
         it('user types a round', async () => {
             fetch.mockResponseOnce(JSON.stringify({ 
@@ -27,12 +25,15 @@ describe('play the Game', () => {
                 skipsRemaining: 0 
             }));
             const user = userEvent.setup();
-            const { getByRole, getByText, queryByRole } = render(<App />);
+            const { getByRole, getByText, queryByRole, findByRole } = render(<App connectWebSocket = {createMockWebSocketInterface}/>);
             await user.clear(getByRole('spinbutton'));
             expect(getByRole('spinbutton')).toHaveValue(null);
             await user.type(getByRole('spinbutton'), '4');
             expect(getByRole('spinbutton')).toHaveValue(4);
             await user.click(getByRole('button',{name: "Start"}));
+            expect(getByRole('button', {name: "connecting..."}));
+            await new Promise((res) => setTimeout(res,2000));
+            expect(getByRole('button', {name: "disconnect"}));
             expect(getByText('2 * 11')).toBeInTheDocument();
             fetch.resetMocks();
             fetch.mockResponseOnce(JSON.stringify({

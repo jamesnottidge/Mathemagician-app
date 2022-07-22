@@ -14,7 +14,7 @@ const LoggingMiddleware = ({ getStateBefore }) => {
             console.log(Date.now() - time);
         }
       // eslint-disable-next-line no-console
-      console.log("Dispatching action", action, "while state is", stateBefore);
+       console.log("Dispatching action", action, "while state is", stateBefore);
 
       /*
        * Delegate to the next middleware or finally - the action dispatch

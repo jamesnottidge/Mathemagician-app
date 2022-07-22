@@ -1,19 +1,19 @@
 import {PropTypes} from "prop-types";
 import { useEffect } from "react";
 import { History } from "../components/History";
+import { useGlobalState } from "../StateContext";
 
 export function Gameover(props) {
-
-    const { setRounds, setTime, setGameState, setCount, clearMemory, setStorage, state } = props;
-    const { time, count, memory, storage } = state;
+    const stateManager = useGlobalState();
+    const { setRounds, setTime, setGameState, setCount, clearMemory, setStorage, state, getTimeSpent } = stateManager;
+    const { time, memory, storage, rounds, name } = state;
     const timeSpent = Date.now()-time;
-    let inputVal=count; 
+    let inputVal = rounds;
     const keyArray=Object.keys(storage);
     useEffect(() =>{
         setStorage(memory);
     },[memory]);
     const handleClick = (e) => {
-        setCount(1);
         setRounds(Number.parseInt(inputVal));
         setTime(Date.now());
         setGameState("play");
@@ -25,18 +25,21 @@ export function Gameover(props) {
     };
     return (
         <div className="display">
-            <p>You spent {timeSpent} milliseconds playing </p>
-            <input type="number" defaultValue={count} 
+            <p>{name} spent {state.ongoing[state.id].timeSpent} milliseconds playing </p>
+            {/* <input type="number" defaultValue={rounds} 
             id="roundChanger" min='1' max='20' onChange={handleInputChange} autoFocus></input>
-            <button onClick={handleClick} autoFocus>Play again?</button>
-            {keyArray.map((key) => {
+            <button onClick={handleClick} autoFocus>Play again?</button> */}
+            <aside className="historyDisplay">
+                {state.memory.map((item) => (<History { ...item } />))}
+            </aside>
+            {/* {keyArray.map((key) => {
                     return (
                         <div>
                             <p>{key}</p>
                             {storage[key].map( (item)=> (<History { ...item } />))}
                         </div>
                     );
-                })}
+            })} */}
         </div>
     );
 }

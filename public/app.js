@@ -1,3 +1,5 @@
+
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 (function () {
 	'use strict';
 
@@ -8273,1141 +8275,1915 @@
 
 	var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDom.exports);
 
-	var propTypes = {exports: {}};
+	function _extends$1() {
+	  _extends$1 = Object.assign ? Object.assign.bind() : function (target) {
+	    for (var i = 1; i < arguments.length; i++) {
+	      var source = arguments[i];
 
-	var reactIs$1 = {exports: {}};
+	      for (var key in source) {
+	        if (Object.prototype.hasOwnProperty.call(source, key)) {
+	          target[key] = source[key];
+	        }
+	      }
+	    }
 
-	var reactIs_development = {};
+	    return target;
+	  };
+	  return _extends$1.apply(this, arguments);
+	}
 
-	/** @license React v16.13.1
-	 * react-is.development.js
+	/**
+	 * Actions represent the type of change to a location value.
 	 *
-	 * Copyright (c) Facebook, Inc. and its affiliates.
-	 *
-	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
+	 * @see https://github.com/remix-run/history/tree/main/docs/api-reference.md#action
 	 */
-	var hasRequiredReactIs_development;
 
-	function requireReactIs_development() {
-	  if (hasRequiredReactIs_development) return reactIs_development;
-	  hasRequiredReactIs_development = 1;
+	var Action;
 
-	  {
-	    (function () {
-	      // nor polyfill, then a plain number is used for performance.
+	(function (Action) {
+	  /**
+	   * A POP indicates a change to an arbitrary index in the history stack, such
+	   * as a back or forward navigation. It does not describe the direction of the
+	   * navigation, only that the current index changed.
+	   *
+	   * Note: This is the default action for newly created history objects.
+	   */
+	  Action["Pop"] = "POP";
+	  /**
+	   * A PUSH indicates a new entry being added to the history stack, such as when
+	   * a link is clicked and a new page loads. When this happens, all subsequent
+	   * entries in the stack are lost.
+	   */
 
-	      var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-	      var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-	      var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-	      var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-	      var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-	      var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-	      var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-	      var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
-	      // (unstable) APIs that have been removed. Can we remove the symbols?
+	  Action["Push"] = "PUSH";
+	  /**
+	   * A REPLACE indicates the entry at the current index in the history stack
+	   * being replaced by a new one.
+	   */
 
-	      var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
-	      var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-	      var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-	      var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-	      var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
-	      var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-	      var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-	      var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
-	      var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
-	      var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
-	      var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
+	  Action["Replace"] = "REPLACE";
+	})(Action || (Action = {}));
 
-	      function isValidElementType(type) {
-	        return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-	        type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
-	      }
+	var readOnly = function (obj) {
+	  return Object.freeze(obj);
+	} ;
 
-	      function typeOf(object) {
-	        if (typeof object === 'object' && object !== null) {
-	          var $$typeof = object.$$typeof;
+	function warning$1(cond, message) {
+	  if (!cond) {
+	    // eslint-disable-next-line no-console
+	    if (typeof console !== 'undefined') console.warn(message);
 
-	          switch ($$typeof) {
-	            case REACT_ELEMENT_TYPE:
-	              var type = object.type;
-
-	              switch (type) {
-	                case REACT_ASYNC_MODE_TYPE:
-	                case REACT_CONCURRENT_MODE_TYPE:
-	                case REACT_FRAGMENT_TYPE:
-	                case REACT_PROFILER_TYPE:
-	                case REACT_STRICT_MODE_TYPE:
-	                case REACT_SUSPENSE_TYPE:
-	                  return type;
-
-	                default:
-	                  var $$typeofType = type && type.$$typeof;
-
-	                  switch ($$typeofType) {
-	                    case REACT_CONTEXT_TYPE:
-	                    case REACT_FORWARD_REF_TYPE:
-	                    case REACT_LAZY_TYPE:
-	                    case REACT_MEMO_TYPE:
-	                    case REACT_PROVIDER_TYPE:
-	                      return $$typeofType;
-
-	                    default:
-	                      return $$typeof;
-	                  }
-
-	              }
-
-	            case REACT_PORTAL_TYPE:
-	              return $$typeof;
-	          }
-	        }
-
-	        return undefined;
-	      } // AsyncMode is deprecated along with isAsyncMode
-
-
-	      var AsyncMode = REACT_ASYNC_MODE_TYPE;
-	      var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
-	      var ContextConsumer = REACT_CONTEXT_TYPE;
-	      var ContextProvider = REACT_PROVIDER_TYPE;
-	      var Element = REACT_ELEMENT_TYPE;
-	      var ForwardRef = REACT_FORWARD_REF_TYPE;
-	      var Fragment = REACT_FRAGMENT_TYPE;
-	      var Lazy = REACT_LAZY_TYPE;
-	      var Memo = REACT_MEMO_TYPE;
-	      var Portal = REACT_PORTAL_TYPE;
-	      var Profiler = REACT_PROFILER_TYPE;
-	      var StrictMode = REACT_STRICT_MODE_TYPE;
-	      var Suspense = REACT_SUSPENSE_TYPE;
-	      var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
-
-	      function isAsyncMode(object) {
-	        {
-	          if (!hasWarnedAboutDeprecatedIsAsyncMode) {
-	            hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
-
-	            console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
-	          }
-	        }
-	        return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
-	      }
-
-	      function isConcurrentMode(object) {
-	        return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
-	      }
-
-	      function isContextConsumer(object) {
-	        return typeOf(object) === REACT_CONTEXT_TYPE;
-	      }
-
-	      function isContextProvider(object) {
-	        return typeOf(object) === REACT_PROVIDER_TYPE;
-	      }
-
-	      function isElement(object) {
-	        return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
-	      }
-
-	      function isForwardRef(object) {
-	        return typeOf(object) === REACT_FORWARD_REF_TYPE;
-	      }
-
-	      function isFragment(object) {
-	        return typeOf(object) === REACT_FRAGMENT_TYPE;
-	      }
-
-	      function isLazy(object) {
-	        return typeOf(object) === REACT_LAZY_TYPE;
-	      }
-
-	      function isMemo(object) {
-	        return typeOf(object) === REACT_MEMO_TYPE;
-	      }
-
-	      function isPortal(object) {
-	        return typeOf(object) === REACT_PORTAL_TYPE;
-	      }
-
-	      function isProfiler(object) {
-	        return typeOf(object) === REACT_PROFILER_TYPE;
-	      }
-
-	      function isStrictMode(object) {
-	        return typeOf(object) === REACT_STRICT_MODE_TYPE;
-	      }
-
-	      function isSuspense(object) {
-	        return typeOf(object) === REACT_SUSPENSE_TYPE;
-	      }
-
-	      reactIs_development.AsyncMode = AsyncMode;
-	      reactIs_development.ConcurrentMode = ConcurrentMode;
-	      reactIs_development.ContextConsumer = ContextConsumer;
-	      reactIs_development.ContextProvider = ContextProvider;
-	      reactIs_development.Element = Element;
-	      reactIs_development.ForwardRef = ForwardRef;
-	      reactIs_development.Fragment = Fragment;
-	      reactIs_development.Lazy = Lazy;
-	      reactIs_development.Memo = Memo;
-	      reactIs_development.Portal = Portal;
-	      reactIs_development.Profiler = Profiler;
-	      reactIs_development.StrictMode = StrictMode;
-	      reactIs_development.Suspense = Suspense;
-	      reactIs_development.isAsyncMode = isAsyncMode;
-	      reactIs_development.isConcurrentMode = isConcurrentMode;
-	      reactIs_development.isContextConsumer = isContextConsumer;
-	      reactIs_development.isContextProvider = isContextProvider;
-	      reactIs_development.isElement = isElement;
-	      reactIs_development.isForwardRef = isForwardRef;
-	      reactIs_development.isFragment = isFragment;
-	      reactIs_development.isLazy = isLazy;
-	      reactIs_development.isMemo = isMemo;
-	      reactIs_development.isPortal = isPortal;
-	      reactIs_development.isProfiler = isProfiler;
-	      reactIs_development.isStrictMode = isStrictMode;
-	      reactIs_development.isSuspense = isSuspense;
-	      reactIs_development.isValidElementType = isValidElementType;
-	      reactIs_development.typeOf = typeOf;
-	    })();
-	  }
-
-	  return reactIs_development;
-	}
-
-	var hasRequiredReactIs;
-
-	function requireReactIs() {
-	  if (hasRequiredReactIs) return reactIs$1.exports;
-	  hasRequiredReactIs = 1;
-
-	  (function (module) {
-
-	    {
-	      module.exports = requireReactIs_development();
-	    }
-	  })(reactIs$1);
-
-	  return reactIs$1.exports;
-	}
-
-	/*
-	object-assign
-	(c) Sindre Sorhus
-	@license MIT
-	*/
-	var objectAssign;
-	var hasRequiredObjectAssign;
-
-	function requireObjectAssign() {
-	  if (hasRequiredObjectAssign) return objectAssign;
-	  hasRequiredObjectAssign = 1;
-	  /* eslint-disable no-unused-vars */
-
-
-	  var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-	  var hasOwnProperty = Object.prototype.hasOwnProperty;
-	  var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-	  function toObject(val) {
-	    if (val === null || val === undefined) {
-	      throw new TypeError('Object.assign cannot be called with null or undefined');
-	    }
-
-	    return Object(val);
-	  }
-
-	  function shouldUseNative() {
 	    try {
-	      if (!Object.assign) {
-	        return false;
-	      } // Detect buggy property enumeration order in older V8 versions.
-	      // https://bugs.chromium.org/p/v8/issues/detail?id=4118
+	      // Welcome to debugging history!
+	      //
+	      // This error is thrown as a convenience so you can more easily
+	      // find the source for a warning that appears in the console by
+	      // enabling "pause on exceptions" in your JavaScript debugger.
+	      throw new Error(message); // eslint-disable-next-line no-empty
+	    } catch (e) {}
+	  }
+	}
 
+	var BeforeUnloadEventType = 'beforeunload';
+	var PopStateEventType = 'popstate';
+	/**
+	 * Browser history stores the location in regular URLs. This is the standard for
+	 * most web apps, but it requires some configuration on the server to ensure you
+	 * serve the same app at multiple URLs.
+	 *
+	 * @see https://github.com/remix-run/history/tree/main/docs/api-reference.md#createbrowserhistory
+	 */
 
-	      var test1 = new String('abc'); // eslint-disable-line no-new-wrappers
+	function createBrowserHistory(options) {
+	  if (options === void 0) {
+	    options = {};
+	  }
 
-	      test1[5] = 'de';
+	  var _options = options,
+	      _options$window = _options.window,
+	      window = _options$window === void 0 ? document.defaultView : _options$window;
+	  var globalHistory = window.history;
 
-	      if (Object.getOwnPropertyNames(test1)[0] === '5') {
-	        return false;
-	      } // https://bugs.chromium.org/p/v8/issues/detail?id=3056
+	  function getIndexAndLocation() {
+	    var _window$location = window.location,
+	        pathname = _window$location.pathname,
+	        search = _window$location.search,
+	        hash = _window$location.hash;
+	    var state = globalHistory.state || {};
+	    return [state.idx, readOnly({
+	      pathname: pathname,
+	      search: search,
+	      hash: hash,
+	      state: state.usr || null,
+	      key: state.key || 'default'
+	    })];
+	  }
 
+	  var blockedPopTx = null;
 
-	      var test2 = {};
+	  function handlePop() {
+	    if (blockedPopTx) {
+	      blockers.call(blockedPopTx);
+	      blockedPopTx = null;
+	    } else {
+	      var nextAction = Action.Pop;
 
-	      for (var i = 0; i < 10; i++) {
-	        test2['_' + String.fromCharCode(i)] = i;
+	      var _getIndexAndLocation = getIndexAndLocation(),
+	          nextIndex = _getIndexAndLocation[0],
+	          nextLocation = _getIndexAndLocation[1];
+
+	      if (blockers.length) {
+	        if (nextIndex != null) {
+	          var delta = index - nextIndex;
+
+	          if (delta) {
+	            // Revert the POP
+	            blockedPopTx = {
+	              action: nextAction,
+	              location: nextLocation,
+	              retry: function retry() {
+	                go(delta * -1);
+	              }
+	            };
+	            go(delta);
+	          }
+	        } else {
+	          // Trying to POP to a location with no index. We did not create
+	          // this location, so we can't effectively block the navigation.
+	          warning$1(false, // TODO: Write up a doc that explains our blocking strategy in
+	          // detail and link to it here so people can understand better what
+	          // is going on and how to avoid it.
+	          "You are trying to block a POP navigation to a location that was not " + "created by the history library. The block will fail silently in " + "production, but in general you should do all navigation with the " + "history library (instead of using window.history.pushState directly) " + "to avoid this situation.") ;
+	        }
+	      } else {
+	        applyTx(nextAction);
 	      }
-
-	      var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-	        return test2[n];
-	      });
-
-	      if (order2.join('') !== '0123456789') {
-	        return false;
-	      } // https://bugs.chromium.org/p/v8/issues/detail?id=3056
-
-
-	      var test3 = {};
-	      'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-	        test3[letter] = letter;
-	      });
-
-	      if (Object.keys(Object.assign({}, test3)).join('') !== 'abcdefghijklmnopqrst') {
-	        return false;
-	      }
-
-	      return true;
-	    } catch (err) {
-	      // We don't expect any of the above to throw, but better to be safe.
-	      return false;
 	    }
 	  }
 
-	  objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
-	    var from;
-	    var to = toObject(target);
-	    var symbols;
+	  window.addEventListener(PopStateEventType, handlePop);
+	  var action = Action.Pop;
 
-	    for (var s = 1; s < arguments.length; s++) {
-	      from = Object(arguments[s]);
+	  var _getIndexAndLocation2 = getIndexAndLocation(),
+	      index = _getIndexAndLocation2[0],
+	      location = _getIndexAndLocation2[1];
 
-	      for (var key in from) {
-	        if (hasOwnProperty.call(from, key)) {
-	          to[key] = from[key];
-	        }
-	      }
+	  var listeners = createEvents();
+	  var blockers = createEvents();
 
-	      if (getOwnPropertySymbols) {
-	        symbols = getOwnPropertySymbols(from);
+	  if (index == null) {
+	    index = 0;
+	    globalHistory.replaceState(_extends$1({}, globalHistory.state, {
+	      idx: index
+	    }), '');
+	  }
 
-	        for (var i = 0; i < symbols.length; i++) {
-	          if (propIsEnumerable.call(from, symbols[i])) {
-	            to[symbols[i]] = from[symbols[i]];
-	          }
-	        }
-	      }
+	  function createHref(to) {
+	    return typeof to === 'string' ? to : createPath(to);
+	  } // state defaults to `null` because `window.history.state` does
+
+
+	  function getNextLocation(to, state) {
+	    if (state === void 0) {
+	      state = null;
 	    }
 
-	    return to;
-	  };
-	  return objectAssign;
-	}
+	    return readOnly(_extends$1({
+	      pathname: location.pathname,
+	      hash: '',
+	      search: ''
+	    }, typeof to === 'string' ? parsePath(to) : to, {
+	      state: state,
+	      key: createKey()
+	    }));
+	  }
 
-	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 *
-	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
-	 */
-	var ReactPropTypesSecret_1;
-	var hasRequiredReactPropTypesSecret;
+	  function getHistoryStateAndUrl(nextLocation, index) {
+	    return [{
+	      usr: nextLocation.state,
+	      key: nextLocation.key,
+	      idx: index
+	    }, createHref(nextLocation)];
+	  }
 
-	function requireReactPropTypesSecret() {
-	  if (hasRequiredReactPropTypesSecret) return ReactPropTypesSecret_1;
-	  hasRequiredReactPropTypesSecret = 1;
+	  function allowTx(action, location, retry) {
+	    return !blockers.length || (blockers.call({
+	      action: action,
+	      location: location,
+	      retry: retry
+	    }), false);
+	  }
 
-	  var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
-	  ReactPropTypesSecret_1 = ReactPropTypesSecret;
-	  return ReactPropTypesSecret_1;
-	}
+	  function applyTx(nextAction) {
+	    action = nextAction;
 
-	var has;
-	var hasRequiredHas;
+	    var _getIndexAndLocation3 = getIndexAndLocation();
 
-	function requireHas() {
-	  if (hasRequiredHas) return has;
-	  hasRequiredHas = 1;
-	  has = Function.call.bind(Object.prototype.hasOwnProperty);
-	  return has;
-	}
+	    index = _getIndexAndLocation3[0];
+	    location = _getIndexAndLocation3[1];
+	    listeners.call({
+	      action: action,
+	      location: location
+	    });
+	  }
 
-	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 *
-	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
-	 */
-	var checkPropTypes_1;
-	var hasRequiredCheckPropTypes;
+	  function push(to, state) {
+	    var nextAction = Action.Push;
+	    var nextLocation = getNextLocation(to, state);
 
-	function requireCheckPropTypes() {
-	  if (hasRequiredCheckPropTypes) return checkPropTypes_1;
-	  hasRequiredCheckPropTypes = 1;
+	    function retry() {
+	      push(to, state);
+	    }
 
-	  var printWarning = function () {};
+	    if (allowTx(nextAction, nextLocation, retry)) {
+	      var _getHistoryStateAndUr = getHistoryStateAndUrl(nextLocation, index + 1),
+	          historyState = _getHistoryStateAndUr[0],
+	          url = _getHistoryStateAndUr[1]; // TODO: Support forced reloading
+	      // try...catch because iOS limits us to 100 pushState calls :/
 
-	  {
-	    var ReactPropTypesSecret = requireReactPropTypesSecret();
-	    var loggedTypeFailures = {};
-	    var has = requireHas();
-
-	    printWarning = function (text) {
-	      var message = 'Warning: ' + text;
-
-	      if (typeof console !== 'undefined') {
-	        console.error(message);
-	      }
 
 	      try {
-	        // --- Welcome to debugging React ---
-	        // This error was thrown as a convenience so that you can use this stack
-	        // to find the callsite that caused this warning to fire.
-	        throw new Error(message);
-	      } catch (x) {
-	        /**/
+	        globalHistory.pushState(historyState, '', url);
+	      } catch (error) {
+	        // They are going to lose state here, but there is no real
+	        // way to warn them about it since the page will refresh...
+	        window.location.assign(url);
 	      }
-	    };
-	  }
-	  /**
-	   * Assert that the values match with the type specs.
-	   * Error messages are memorized and will only be shown once.
-	   *
-	   * @param {object} typeSpecs Map of name to a ReactPropType
-	   * @param {object} values Runtime values that need to be type-checked
-	   * @param {string} location e.g. "prop", "context", "child context"
-	   * @param {string} componentName Name of the component for error messages.
-	   * @param {?Function} getStack Returns the component stack.
-	   * @private
-	   */
 
-
-	  function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
-	    {
-	      for (var typeSpecName in typeSpecs) {
-	        if (has(typeSpecs, typeSpecName)) {
-	          var error; // Prop type validation may throw. In case they do, we don't want to
-	          // fail the render phase where it didn't fail before. So we log it.
-	          // After these have been cleaned up, we'll let them throw.
-
-	          try {
-	            // This is intentionally an invariant that gets caught. It's the same
-	            // behavior as without this statement except with a better message.
-	            if (typeof typeSpecs[typeSpecName] !== 'function') {
-	              var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.' + 'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.');
-	              err.name = 'Invariant Violation';
-	              throw err;
-	            }
-
-	            error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
-	          } catch (ex) {
-	            error = ex;
-	          }
-
-	          if (error && !(error instanceof Error)) {
-	            printWarning((componentName || 'React class') + ': type specification of ' + location + ' `' + typeSpecName + '` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a ' + typeof error + '. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).');
-	          }
-
-	          if (error instanceof Error && !(error.message in loggedTypeFailures)) {
-	            // Only monitor this failure once because there tends to be a lot of the
-	            // same error.
-	            loggedTypeFailures[error.message] = true;
-	            var stack = getStack ? getStack() : '';
-	            printWarning('Failed ' + location + ' type: ' + error.message + (stack != null ? stack : ''));
-	          }
-	        }
-	      }
+	      applyTx(nextAction);
 	    }
 	  }
-	  /**
-	   * Resets warning cache when testing.
-	   *
-	   * @private
-	   */
+
+	  function replace(to, state) {
+	    var nextAction = Action.Replace;
+	    var nextLocation = getNextLocation(to, state);
+
+	    function retry() {
+	      replace(to, state);
+	    }
+
+	    if (allowTx(nextAction, nextLocation, retry)) {
+	      var _getHistoryStateAndUr2 = getHistoryStateAndUrl(nextLocation, index),
+	          historyState = _getHistoryStateAndUr2[0],
+	          url = _getHistoryStateAndUr2[1]; // TODO: Support forced reloading
 
 
-	  checkPropTypes.resetWarningCache = function () {
-	    {
-	      loggedTypeFailures = {};
+	      globalHistory.replaceState(historyState, '', url);
+	      applyTx(nextAction);
+	    }
+	  }
+
+	  function go(delta) {
+	    globalHistory.go(delta);
+	  }
+
+	  var history = {
+	    get action() {
+	      return action;
+	    },
+
+	    get location() {
+	      return location;
+	    },
+
+	    createHref: createHref,
+	    push: push,
+	    replace: replace,
+	    go: go,
+	    back: function back() {
+	      go(-1);
+	    },
+	    forward: function forward() {
+	      go(1);
+	    },
+	    listen: function listen(listener) {
+	      return listeners.push(listener);
+	    },
+	    block: function block(blocker) {
+	      var unblock = blockers.push(blocker);
+
+	      if (blockers.length === 1) {
+	        window.addEventListener(BeforeUnloadEventType, promptBeforeUnload);
+	      }
+
+	      return function () {
+	        unblock(); // Remove the beforeunload listener so the document may
+	        // still be salvageable in the pagehide event.
+	        // See https://html.spec.whatwg.org/#unloading-documents
+
+	        if (!blockers.length) {
+	          window.removeEventListener(BeforeUnloadEventType, promptBeforeUnload);
+	        }
+	      };
 	    }
 	  };
+	  return history;
+	}
 
-	  checkPropTypes_1 = checkPropTypes;
-	  return checkPropTypes_1;
+	function promptBeforeUnload(event) {
+	  // Cancel the event.
+	  event.preventDefault(); // Chrome (and legacy IE) requires returnValue to be set.
+
+	  event.returnValue = '';
+	}
+
+	function createEvents() {
+	  var handlers = [];
+	  return {
+	    get length() {
+	      return handlers.length;
+	    },
+
+	    push: function push(fn) {
+	      handlers.push(fn);
+	      return function () {
+	        handlers = handlers.filter(function (handler) {
+	          return handler !== fn;
+	        });
+	      };
+	    },
+	    call: function call(arg) {
+	      handlers.forEach(function (fn) {
+	        return fn && fn(arg);
+	      });
+	    }
+	  };
+	}
+
+	function createKey() {
+	  return Math.random().toString(36).substr(2, 8);
+	}
+	/**
+	 * Creates a string URL path from the given pathname, search, and hash components.
+	 *
+	 * @see https://github.com/remix-run/history/tree/main/docs/api-reference.md#createpath
+	 */
+
+
+	function createPath(_ref) {
+	  var _ref$pathname = _ref.pathname,
+	      pathname = _ref$pathname === void 0 ? '/' : _ref$pathname,
+	      _ref$search = _ref.search,
+	      search = _ref$search === void 0 ? '' : _ref$search,
+	      _ref$hash = _ref.hash,
+	      hash = _ref$hash === void 0 ? '' : _ref$hash;
+	  if (search && search !== '?') pathname += search.charAt(0) === '?' ? search : '?' + search;
+	  if (hash && hash !== '#') pathname += hash.charAt(0) === '#' ? hash : '#' + hash;
+	  return pathname;
+	}
+	/**
+	 * Parses a string URL path into its separate pathname, search, and hash components.
+	 *
+	 * @see https://github.com/remix-run/history/tree/main/docs/api-reference.md#parsepath
+	 */
+
+
+	function parsePath(path) {
+	  var parsedPath = {};
+
+	  if (path) {
+	    var hashIndex = path.indexOf('#');
+
+	    if (hashIndex >= 0) {
+	      parsedPath.hash = path.substr(hashIndex);
+	      path = path.substr(0, hashIndex);
+	    }
+
+	    var searchIndex = path.indexOf('?');
+
+	    if (searchIndex >= 0) {
+	      parsedPath.search = path.substr(searchIndex);
+	      path = path.substr(0, searchIndex);
+	    }
+
+	    if (path) {
+	      parsedPath.pathname = path;
+	    }
+	  }
+
+	  return parsedPath;
 	}
 
 	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * React Router v6.3.0
+	 *
+	 * Copyright (c) Remix Software Inc.
 	 *
 	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
+	 * LICENSE.md file in the root directory of this source tree.
+	 *
+	 * @license MIT
 	 */
-	var factoryWithTypeCheckers;
-	var hasRequiredFactoryWithTypeCheckers;
+	const NavigationContext = /*#__PURE__*/react.exports.createContext(null);
 
-	function requireFactoryWithTypeCheckers() {
-	  if (hasRequiredFactoryWithTypeCheckers) return factoryWithTypeCheckers;
-	  hasRequiredFactoryWithTypeCheckers = 1;
+	{
+	  NavigationContext.displayName = "Navigation";
+	}
 
-	  var ReactIs = requireReactIs();
-	  var assign = requireObjectAssign();
-	  var ReactPropTypesSecret = requireReactPropTypesSecret();
-	  var has = requireHas();
-	  var checkPropTypes = requireCheckPropTypes();
+	const LocationContext = /*#__PURE__*/react.exports.createContext(null);
 
-	  var printWarning = function () {};
+	{
+	  LocationContext.displayName = "Location";
+	}
 
-	  {
-	    printWarning = function (text) {
-	      var message = 'Warning: ' + text;
+	const RouteContext = /*#__PURE__*/react.exports.createContext({
+	  outlet: null,
+	  matches: []
+	});
 
-	      if (typeof console !== 'undefined') {
-	        console.error(message);
-	      }
+	{
+	  RouteContext.displayName = "Route";
+	}
 
-	      try {
-	        // --- Welcome to debugging React ---
-	        // This error was thrown as a convenience so that you can use this stack
-	        // to find the callsite that caused this warning to fire.
-	        throw new Error(message);
-	      } catch (x) {}
-	    };
+	function invariant(cond, message) {
+	  if (!cond) throw new Error(message);
+	}
+
+	function warning(cond, message) {
+	  if (!cond) {
+	    // eslint-disable-next-line no-console
+	    if (typeof console !== "undefined") console.warn(message);
+
+	    try {
+	      // Welcome to debugging React Router!
+	      //
+	      // This error is thrown as a convenience so you can more easily
+	      // find the source for a warning that appears in the console by
+	      // enabling "pause on exceptions" in your JavaScript debugger.
+	      throw new Error(message); // eslint-disable-next-line no-empty
+	    } catch (e) {}
+	  }
+	}
+
+	const alreadyWarned = {};
+
+	function warningOnce(key, cond, message) {
+	  if (!cond && !alreadyWarned[key]) {
+	    alreadyWarned[key] = true;
+	    warning(false, message) ;
+	  }
+	}
+	/**
+	 * A RouteMatch contains info about how a route matched a URL.
+	 */
+
+	/**
+	 * Matches the given routes to a location and returns the match data.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#matchroutes
+	 */
+
+
+	function matchRoutes(routes, locationArg, basename) {
+	  if (basename === void 0) {
+	    basename = "/";
 	  }
 
-	  function emptyFunctionThatReturnsNull() {
+	  let location = typeof locationArg === "string" ? parsePath(locationArg) : locationArg;
+	  let pathname = stripBasename(location.pathname || "/", basename);
+
+	  if (pathname == null) {
 	    return null;
 	  }
 
-	  factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
-	    /* global Symbol */
-	    var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-	    var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+	  let branches = flattenRoutes(routes);
+	  rankRouteBranches(branches);
+	  let matches = null;
 
-	    /**
-	     * Returns the iterator method function contained on the iterable object.
-	     *
-	     * Be sure to invoke the function with the iterable as context:
-	     *
-	     *     var iteratorFn = getIteratorFn(myIterable);
-	     *     if (iteratorFn) {
-	     *       var iterator = iteratorFn.call(myIterable);
-	     *       ...
-	     *     }
-	     *
-	     * @param {?object} maybeIterable
-	     * @return {?function}
-	     */
+	  for (let i = 0; matches == null && i < branches.length; ++i) {
+	    matches = matchRouteBranch(branches[i], pathname);
+	  }
 
-	    function getIteratorFn(maybeIterable) {
-	      var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+	  return matches;
+	}
 
-	      if (typeof iteratorFn === 'function') {
-	        return iteratorFn;
-	      }
-	    }
-	    /**
-	     * Collection of methods that allow declaration and validation of props that are
-	     * supplied to React components. Example usage:
-	     *
-	     *   var Props = require('ReactPropTypes');
-	     *   var MyArticle = React.createClass({
-	     *     propTypes: {
-	     *       // An optional string prop named "description".
-	     *       description: Props.string,
-	     *
-	     *       // A required enum prop named "category".
-	     *       category: Props.oneOf(['News','Photos']).isRequired,
-	     *
-	     *       // A prop named "dialog" that requires an instance of Dialog.
-	     *       dialog: Props.instanceOf(Dialog).isRequired
-	     *     },
-	     *     render: function() { ... }
-	     *   });
-	     *
-	     * A more formal specification of how these methods are used:
-	     *
-	     *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
-	     *   decl := ReactPropTypes.{type}(.isRequired)?
-	     *
-	     * Each and every declaration produces a function with the same signature. This
-	     * allows the creation of custom validation functions. For example:
-	     *
-	     *  var MyLink = React.createClass({
-	     *    propTypes: {
-	     *      // An optional string or URI prop named "href".
-	     *      href: function(props, propName, componentName) {
-	     *        var propValue = props[propName];
-	     *        if (propValue != null && typeof propValue !== 'string' &&
-	     *            !(propValue instanceof URI)) {
-	     *          return new Error(
-	     *            'Expected a string or an URI for ' + propName + ' in ' +
-	     *            componentName
-	     *          );
-	     *        }
-	     *      }
-	     *    },
-	     *    render: function() {...}
-	     *  });
-	     *
-	     * @internal
-	     */
+	function flattenRoutes(routes, branches, parentsMeta, parentPath) {
+	  if (branches === void 0) {
+	    branches = [];
+	  }
 
+	  if (parentsMeta === void 0) {
+	    parentsMeta = [];
+	  }
 
-	    var ANONYMOUS = '<<anonymous>>'; // Important!
-	    // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+	  if (parentPath === void 0) {
+	    parentPath = "";
+	  }
 
-	    var ReactPropTypes = {
-	      array: createPrimitiveTypeChecker('array'),
-	      bigint: createPrimitiveTypeChecker('bigint'),
-	      bool: createPrimitiveTypeChecker('boolean'),
-	      func: createPrimitiveTypeChecker('function'),
-	      number: createPrimitiveTypeChecker('number'),
-	      object: createPrimitiveTypeChecker('object'),
-	      string: createPrimitiveTypeChecker('string'),
-	      symbol: createPrimitiveTypeChecker('symbol'),
-	      any: createAnyTypeChecker(),
-	      arrayOf: createArrayOfTypeChecker,
-	      element: createElementTypeChecker(),
-	      elementType: createElementTypeTypeChecker(),
-	      instanceOf: createInstanceTypeChecker,
-	      node: createNodeChecker(),
-	      objectOf: createObjectOfTypeChecker,
-	      oneOf: createEnumTypeChecker,
-	      oneOfType: createUnionTypeChecker,
-	      shape: createShapeTypeChecker,
-	      exact: createStrictShapeTypeChecker
+	  routes.forEach((route, index) => {
+	    let meta = {
+	      relativePath: route.path || "",
+	      caseSensitive: route.caseSensitive === true,
+	      childrenIndex: index,
+	      route
 	    };
-	    /**
-	     * inlined Object.is polyfill to avoid requiring consumers ship their own
-	     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-	     */
 
-	    /*eslint-disable no-self-compare*/
-
-	    function is(x, y) {
-	      // SameValue algorithm
-	      if (x === y) {
-	        // Steps 1-5, 7-10
-	        // Steps 6.b-6.e: +0 != -0
-	        return x !== 0 || 1 / x === 1 / y;
-	      } else {
-	        // Step 6.a: NaN == NaN
-	        return x !== x && y !== y;
-	      }
-	    }
-	    /*eslint-enable no-self-compare*/
-
-	    /**
-	     * We use an Error-like object for backward compatibility as people may call
-	     * PropTypes directly and inspect their output. However, we don't use real
-	     * Errors anymore. We don't inspect their stack anyway, and creating them
-	     * is prohibitively expensive if they are created too often, such as what
-	     * happens in oneOfType() for any type before the one that matched.
-	     */
-
-
-	    function PropTypeError(message, data) {
-	      this.message = message;
-	      this.data = data && typeof data === 'object' ? data : {};
-	      this.stack = '';
-	    } // Make `instanceof Error` still work for returned errors.
-
-
-	    PropTypeError.prototype = Error.prototype;
-
-	    function createChainableTypeChecker(validate) {
-	      {
-	        var manualPropTypeCallCache = {};
-	        var manualPropTypeWarningCount = 0;
-	      }
-
-	      function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
-	        componentName = componentName || ANONYMOUS;
-	        propFullName = propFullName || propName;
-
-	        if (secret !== ReactPropTypesSecret) {
-	          if (throwOnDirectAccess) {
-	            // New behavior only for users of `prop-types` package
-	            var err = new Error('Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use `PropTypes.checkPropTypes()` to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
-	            err.name = 'Invariant Violation';
-	            throw err;
-	          } else if (typeof console !== 'undefined') {
-	            // Old behavior for people using React.PropTypes
-	            var cacheKey = componentName + ':' + propName;
-
-	            if (!manualPropTypeCallCache[cacheKey] && // Avoid spamming the console because they are often not actionable except for lib authors
-	            manualPropTypeWarningCount < 3) {
-	              printWarning('You are manually calling a React.PropTypes validation ' + 'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' + 'and will throw in the standalone `prop-types` package. ' + 'You may be seeing this warning due to a third-party PropTypes ' + 'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.');
-	              manualPropTypeCallCache[cacheKey] = true;
-	              manualPropTypeWarningCount++;
-	            }
-	          }
-	        }
-
-	        if (props[propName] == null) {
-	          if (isRequired) {
-	            if (props[propName] === null) {
-	              return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
-	            }
-
-	            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
-	          }
-
-	          return null;
-	        } else {
-	          return validate(props, propName, componentName, location, propFullName);
-	        }
-	      }
-
-	      var chainedCheckType = checkType.bind(null, false);
-	      chainedCheckType.isRequired = checkType.bind(null, true);
-	      return chainedCheckType;
+	    if (meta.relativePath.startsWith("/")) {
+	      !meta.relativePath.startsWith(parentPath) ? invariant(false, "Absolute route path \"" + meta.relativePath + "\" nested under path " + ("\"" + parentPath + "\" is not valid. An absolute child route path ") + "must start with the combined path of all its parent routes.")  : void 0;
+	      meta.relativePath = meta.relativePath.slice(parentPath.length);
 	    }
 
-	    function createPrimitiveTypeChecker(expectedType) {
-	      function validate(props, propName, componentName, location, propFullName, secret) {
-	        var propValue = props[propName];
-	        var propType = getPropType(propValue);
+	    let path = joinPaths([parentPath, meta.relativePath]);
+	    let routesMeta = parentsMeta.concat(meta); // Add the children before adding this route to the array so we traverse the
+	    // route tree depth-first and child routes appear before their parents in
+	    // the "flattened" version.
 
-	        if (propType !== expectedType) {
-	          // `propValue` being instance of, say, date/regexp, pass the 'object'
-	          // check, but we can offer a more precise error message here rather than
-	          // 'of type `object`'.
-	          var preciseType = getPreciseType(propValue);
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'), {
-	            expectedType: expectedType
-	          });
-	        }
+	    if (route.children && route.children.length > 0) {
+	      !(route.index !== true) ? invariant(false, "Index routes must not have child routes. Please remove " + ("all child routes from route path \"" + path + "\"."))  : void 0;
+	      flattenRoutes(route.children, branches, routesMeta, path);
+	    } // Routes without a path shouldn't ever match by themselves unless they are
+	    // index routes, so don't add them to the list of possible branches.
 
-	        return null;
-	      }
 
-	      return createChainableTypeChecker(validate);
+	    if (route.path == null && !route.index) {
+	      return;
 	    }
 
-	    function createAnyTypeChecker() {
-	      return createChainableTypeChecker(emptyFunctionThatReturnsNull);
+	    branches.push({
+	      path,
+	      score: computeScore(path, route.index),
+	      routesMeta
+	    });
+	  });
+	  return branches;
+	}
+
+	function rankRouteBranches(branches) {
+	  branches.sort((a, b) => a.score !== b.score ? b.score - a.score // Higher score first
+	  : compareIndexes(a.routesMeta.map(meta => meta.childrenIndex), b.routesMeta.map(meta => meta.childrenIndex)));
+	}
+
+	const paramRe = /^:\w+$/;
+	const dynamicSegmentValue = 3;
+	const indexRouteValue = 2;
+	const emptySegmentValue = 1;
+	const staticSegmentValue = 10;
+	const splatPenalty = -2;
+
+	const isSplat = s => s === "*";
+
+	function computeScore(path, index) {
+	  let segments = path.split("/");
+	  let initialScore = segments.length;
+
+	  if (segments.some(isSplat)) {
+	    initialScore += splatPenalty;
+	  }
+
+	  if (index) {
+	    initialScore += indexRouteValue;
+	  }
+
+	  return segments.filter(s => !isSplat(s)).reduce((score, segment) => score + (paramRe.test(segment) ? dynamicSegmentValue : segment === "" ? emptySegmentValue : staticSegmentValue), initialScore);
+	}
+
+	function compareIndexes(a, b) {
+	  let siblings = a.length === b.length && a.slice(0, -1).every((n, i) => n === b[i]);
+	  return siblings ? // If two routes are siblings, we should try to match the earlier sibling
+	  // first. This allows people to have fine-grained control over the matching
+	  // behavior by simply putting routes with identical paths in the order they
+	  // want them tried.
+	  a[a.length - 1] - b[b.length - 1] : // Otherwise, it doesn't really make sense to rank non-siblings by index,
+	  // so they sort equally.
+	  0;
+	}
+
+	function matchRouteBranch(branch, pathname) {
+	  let {
+	    routesMeta
+	  } = branch;
+	  let matchedParams = {};
+	  let matchedPathname = "/";
+	  let matches = [];
+
+	  for (let i = 0; i < routesMeta.length; ++i) {
+	    let meta = routesMeta[i];
+	    let end = i === routesMeta.length - 1;
+	    let remainingPathname = matchedPathname === "/" ? pathname : pathname.slice(matchedPathname.length) || "/";
+	    let match = matchPath({
+	      path: meta.relativePath,
+	      caseSensitive: meta.caseSensitive,
+	      end
+	    }, remainingPathname);
+	    if (!match) return null;
+	    Object.assign(matchedParams, match.params);
+	    let route = meta.route;
+	    matches.push({
+	      params: matchedParams,
+	      pathname: joinPaths([matchedPathname, match.pathname]),
+	      pathnameBase: normalizePathname(joinPaths([matchedPathname, match.pathnameBase])),
+	      route
+	    });
+
+	    if (match.pathnameBase !== "/") {
+	      matchedPathname = joinPaths([matchedPathname, match.pathnameBase]);
+	    }
+	  }
+
+	  return matches;
+	}
+	/**
+	 * A PathPattern is used to match on some portion of a URL pathname.
+	 */
+
+	/**
+	 * Performs pattern matching on a URL pathname and returns information about
+	 * the match.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#matchpath
+	 */
+
+
+	function matchPath(pattern, pathname) {
+	  if (typeof pattern === "string") {
+	    pattern = {
+	      path: pattern,
+	      caseSensitive: false,
+	      end: true
+	    };
+	  }
+
+	  let [matcher, paramNames] = compilePath(pattern.path, pattern.caseSensitive, pattern.end);
+	  let match = pathname.match(matcher);
+	  if (!match) return null;
+	  let matchedPathname = match[0];
+	  let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
+	  let captureGroups = match.slice(1);
+	  let params = paramNames.reduce((memo, paramName, index) => {
+	    // We need to compute the pathnameBase here using the raw splat value
+	    // instead of using params["*"] later because it will be decoded then
+	    if (paramName === "*") {
+	      let splatValue = captureGroups[index] || "";
+	      pathnameBase = matchedPathname.slice(0, matchedPathname.length - splatValue.length).replace(/(.)\/+$/, "$1");
 	    }
 
-	    function createArrayOfTypeChecker(typeChecker) {
-	      function validate(props, propName, componentName, location, propFullName) {
-	        if (typeof typeChecker !== 'function') {
-	          return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
-	        }
-
-	        var propValue = props[propName];
-
-	        if (!Array.isArray(propValue)) {
-	          var propType = getPropType(propValue);
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
-	        }
-
-	        for (var i = 0; i < propValue.length; i++) {
-	          var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret);
-
-	          if (error instanceof Error) {
-	            return error;
-	          }
-	        }
-
-	        return null;
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function createElementTypeChecker() {
-	      function validate(props, propName, componentName, location, propFullName) {
-	        var propValue = props[propName];
-
-	        if (!isValidElement(propValue)) {
-	          var propType = getPropType(propValue);
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
-	        }
-
-	        return null;
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function createElementTypeTypeChecker() {
-	      function validate(props, propName, componentName, location, propFullName) {
-	        var propValue = props[propName];
-
-	        if (!ReactIs.isValidElementType(propValue)) {
-	          var propType = getPropType(propValue);
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
-	        }
-
-	        return null;
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function createInstanceTypeChecker(expectedClass) {
-	      function validate(props, propName, componentName, location, propFullName) {
-	        if (!(props[propName] instanceof expectedClass)) {
-	          var expectedClassName = expectedClass.name || ANONYMOUS;
-	          var actualClassName = getClassName(props[propName]);
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
-	        }
-
-	        return null;
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function createEnumTypeChecker(expectedValues) {
-	      if (!Array.isArray(expectedValues)) {
-	        {
-	          if (arguments.length > 1) {
-	            printWarning('Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' + 'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).');
-	          } else {
-	            printWarning('Invalid argument supplied to oneOf, expected an array.');
-	          }
-	        }
-
-	        return emptyFunctionThatReturnsNull;
-	      }
-
-	      function validate(props, propName, componentName, location, propFullName) {
-	        var propValue = props[propName];
-
-	        for (var i = 0; i < expectedValues.length; i++) {
-	          if (is(propValue, expectedValues[i])) {
-	            return null;
-	          }
-	        }
-
-	        var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
-	          var type = getPreciseType(value);
-
-	          if (type === 'symbol') {
-	            return String(value);
-	          }
-
-	          return value;
-	        });
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function createObjectOfTypeChecker(typeChecker) {
-	      function validate(props, propName, componentName, location, propFullName) {
-	        if (typeof typeChecker !== 'function') {
-	          return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
-	        }
-
-	        var propValue = props[propName];
-	        var propType = getPropType(propValue);
-
-	        if (propType !== 'object') {
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
-	        }
-
-	        for (var key in propValue) {
-	          if (has(propValue, key)) {
-	            var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-
-	            if (error instanceof Error) {
-	              return error;
-	            }
-	          }
-	        }
-
-	        return null;
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function createUnionTypeChecker(arrayOfTypeCheckers) {
-	      if (!Array.isArray(arrayOfTypeCheckers)) {
-	        printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') ;
-	        return emptyFunctionThatReturnsNull;
-	      }
-
-	      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
-	        var checker = arrayOfTypeCheckers[i];
-
-	        if (typeof checker !== 'function') {
-	          printWarning('Invalid argument supplied to oneOfType. Expected an array of check functions, but ' + 'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.');
-	          return emptyFunctionThatReturnsNull;
-	        }
-	      }
-
-	      function validate(props, propName, componentName, location, propFullName) {
-	        var expectedTypes = [];
-
-	        for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
-	          var checker = arrayOfTypeCheckers[i];
-	          var checkerResult = checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret);
-
-	          if (checkerResult == null) {
-	            return null;
-	          }
-
-	          if (checkerResult.data && has(checkerResult.data, 'expectedType')) {
-	            expectedTypes.push(checkerResult.data.expectedType);
-	          }
-	        }
-
-	        var expectedTypesMessage = expectedTypes.length > 0 ? ', expected one of type [' + expectedTypes.join(', ') + ']' : '';
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`' + expectedTypesMessage + '.'));
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function createNodeChecker() {
-	      function validate(props, propName, componentName, location, propFullName) {
-	        if (!isNode(props[propName])) {
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
-	        }
-
-	        return null;
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function invalidValidatorError(componentName, location, propFullName, key, type) {
-	      return new PropTypeError((componentName || 'React class') + ': ' + location + ' type `' + propFullName + '.' + key + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + type + '`.');
-	    }
-
-	    function createShapeTypeChecker(shapeTypes) {
-	      function validate(props, propName, componentName, location, propFullName) {
-	        var propValue = props[propName];
-	        var propType = getPropType(propValue);
-
-	        if (propType !== 'object') {
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-	        }
-
-	        for (var key in shapeTypes) {
-	          var checker = shapeTypes[key];
-
-	          if (typeof checker !== 'function') {
-	            return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
-	          }
-
-	          var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-
-	          if (error) {
-	            return error;
-	          }
-	        }
-
-	        return null;
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function createStrictShapeTypeChecker(shapeTypes) {
-	      function validate(props, propName, componentName, location, propFullName) {
-	        var propValue = props[propName];
-	        var propType = getPropType(propValue);
-
-	        if (propType !== 'object') {
-	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-	        } // We need to check all keys in case some are required but missing from props.
-
-
-	        var allKeys = assign({}, props[propName], shapeTypes);
-
-	        for (var key in allKeys) {
-	          var checker = shapeTypes[key];
-
-	          if (has(shapeTypes, key) && typeof checker !== 'function') {
-	            return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
-	          }
-
-	          if (!checker) {
-	            return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' + '\nBad object: ' + JSON.stringify(props[propName], null, '  ') + '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  '));
-	          }
-
-	          var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-
-	          if (error) {
-	            return error;
-	          }
-	        }
-
-	        return null;
-	      }
-
-	      return createChainableTypeChecker(validate);
-	    }
-
-	    function isNode(propValue) {
-	      switch (typeof propValue) {
-	        case 'number':
-	        case 'string':
-	        case 'undefined':
-	          return true;
-
-	        case 'boolean':
-	          return !propValue;
-
-	        case 'object':
-	          if (Array.isArray(propValue)) {
-	            return propValue.every(isNode);
-	          }
-
-	          if (propValue === null || isValidElement(propValue)) {
-	            return true;
-	          }
-
-	          var iteratorFn = getIteratorFn(propValue);
-
-	          if (iteratorFn) {
-	            var iterator = iteratorFn.call(propValue);
-	            var step;
-
-	            if (iteratorFn !== propValue.entries) {
-	              while (!(step = iterator.next()).done) {
-	                if (!isNode(step.value)) {
-	                  return false;
-	                }
-	              }
-	            } else {
-	              // Iterator will provide entry [k,v] tuples rather than values.
-	              while (!(step = iterator.next()).done) {
-	                var entry = step.value;
-
-	                if (entry) {
-	                  if (!isNode(entry[1])) {
-	                    return false;
-	                  }
-	                }
-	              }
-	            }
-	          } else {
-	            return false;
-	          }
-
-	          return true;
-
-	        default:
-	          return false;
-	      }
-	    }
-
-	    function isSymbol(propType, propValue) {
-	      // Native Symbol.
-	      if (propType === 'symbol') {
-	        return true;
-	      } // falsy value can't be a Symbol
-
-
-	      if (!propValue) {
-	        return false;
-	      } // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
-
-
-	      if (propValue['@@toStringTag'] === 'Symbol') {
-	        return true;
-	      } // Fallback for non-spec compliant Symbols which are polyfilled.
-
-
-	      if (typeof Symbol === 'function' && propValue instanceof Symbol) {
-	        return true;
-	      }
-
-	      return false;
-	    } // Equivalent of `typeof` but with special handling for array and regexp.
-
-
-	    function getPropType(propValue) {
-	      var propType = typeof propValue;
-
-	      if (Array.isArray(propValue)) {
-	        return 'array';
-	      }
-
-	      if (propValue instanceof RegExp) {
-	        // Old webkits (at least until Android 4.0) return 'function' rather than
-	        // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
-	        // passes PropTypes.object.
-	        return 'object';
-	      }
-
-	      if (isSymbol(propType, propValue)) {
-	        return 'symbol';
-	      }
-
-	      return propType;
-	    } // This handles more types than `getPropType`. Only used for error messages.
-	    // See `createPrimitiveTypeChecker`.
-
-
-	    function getPreciseType(propValue) {
-	      if (typeof propValue === 'undefined' || propValue === null) {
-	        return '' + propValue;
-	      }
-
-	      var propType = getPropType(propValue);
-
-	      if (propType === 'object') {
-	        if (propValue instanceof Date) {
-	          return 'date';
-	        } else if (propValue instanceof RegExp) {
-	          return 'regexp';
-	        }
-	      }
-
-	      return propType;
-	    } // Returns a string that is postfixed to a warning about an invalid type.
-	    // For example, "undefined" or "of type array"
-
-
-	    function getPostfixForTypeWarning(value) {
-	      var type = getPreciseType(value);
-
-	      switch (type) {
-	        case 'array':
-	        case 'object':
-	          return 'an ' + type;
-
-	        case 'boolean':
-	        case 'date':
-	        case 'regexp':
-	          return 'a ' + type;
-
-	        default:
-	          return type;
-	      }
-	    } // Returns class name of the object, if any.
-
-
-	    function getClassName(propValue) {
-	      if (!propValue.constructor || !propValue.constructor.name) {
-	        return ANONYMOUS;
-	      }
-
-	      return propValue.constructor.name;
-	    }
-
-	    ReactPropTypes.checkPropTypes = checkPropTypes;
-	    ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
-	    ReactPropTypes.PropTypes = ReactPropTypes;
-	    return ReactPropTypes;
+	    memo[paramName] = safelyDecodeURIComponent(captureGroups[index] || "", paramName);
+	    return memo;
+	  }, {});
+	  return {
+	    params,
+	    pathname: matchedPathname,
+	    pathnameBase,
+	    pattern
 	  };
+	}
 
-	  return factoryWithTypeCheckers;
+	function compilePath(path, caseSensitive, end) {
+	  if (caseSensitive === void 0) {
+	    caseSensitive = false;
+	  }
+
+	  if (end === void 0) {
+	    end = true;
+	  }
+
+	  warning(path === "*" || !path.endsWith("*") || path.endsWith("/*"), "Route path \"" + path + "\" will be treated as if it were " + ("\"" + path.replace(/\*$/, "/*") + "\" because the `*` character must ") + "always follow a `/` in the pattern. To get rid of this warning, " + ("please change the route path to \"" + path.replace(/\*$/, "/*") + "\".")) ;
+	  let paramNames = [];
+	  let regexpSource = "^" + path.replace(/\/*\*?$/, "") // Ignore trailing / and /*, we'll handle it below
+	  .replace(/^\/*/, "/") // Make sure it has a leading /
+	  .replace(/[\\.*+^$?{}|()[\]]/g, "\\$&") // Escape special regex chars
+	  .replace(/:(\w+)/g, (_, paramName) => {
+	    paramNames.push(paramName);
+	    return "([^\\/]+)";
+	  });
+
+	  if (path.endsWith("*")) {
+	    paramNames.push("*");
+	    regexpSource += path === "*" || path === "/*" ? "(.*)$" // Already matched the initial /, just match the rest
+	    : "(?:\\/(.+)|\\/*)$"; // Don't include the / in params["*"]
+	  } else {
+	    regexpSource += end ? "\\/*$" // When matching to the end, ignore trailing slashes
+	    : // Otherwise, match a word boundary or a proceeding /. The word boundary restricts
+	    // parent routes to matching only their own words and nothing more, e.g. parent
+	    // route "/home" should not match "/home2".
+	    // Additionally, allow paths starting with `.`, `-`, `~`, and url-encoded entities,
+	    // but do not consume the character in the matched path so they can match against
+	    // nested paths.
+	    "(?:(?=[.~-]|%[0-9A-F]{2})|\\b|\\/|$)";
+	  }
+
+	  let matcher = new RegExp(regexpSource, caseSensitive ? undefined : "i");
+	  return [matcher, paramNames];
+	}
+
+	function safelyDecodeURIComponent(value, paramName) {
+	  try {
+	    return decodeURIComponent(value);
+	  } catch (error) {
+	    warning(false, "The value for the URL param \"" + paramName + "\" will not be decoded because" + (" the string \"" + value + "\" is a malformed URL segment. This is probably") + (" due to a bad percent encoding (" + error + ").")) ;
+	    return value;
+	  }
+	}
+	/**
+	 * Returns a resolved path object relative to the given pathname.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#resolvepath
+	 */
+
+
+	function resolvePath(to, fromPathname) {
+	  if (fromPathname === void 0) {
+	    fromPathname = "/";
+	  }
+
+	  let {
+	    pathname: toPathname,
+	    search = "",
+	    hash = ""
+	  } = typeof to === "string" ? parsePath(to) : to;
+	  let pathname = toPathname ? toPathname.startsWith("/") ? toPathname : resolvePathname(toPathname, fromPathname) : fromPathname;
+	  return {
+	    pathname,
+	    search: normalizeSearch(search),
+	    hash: normalizeHash(hash)
+	  };
+	}
+
+	function resolvePathname(relativePath, fromPathname) {
+	  let segments = fromPathname.replace(/\/+$/, "").split("/");
+	  let relativeSegments = relativePath.split("/");
+	  relativeSegments.forEach(segment => {
+	    if (segment === "..") {
+	      // Keep the root "" segment so the pathname starts at /
+	      if (segments.length > 1) segments.pop();
+	    } else if (segment !== ".") {
+	      segments.push(segment);
+	    }
+	  });
+	  return segments.length > 1 ? segments.join("/") : "/";
+	}
+
+	function resolveTo(toArg, routePathnames, locationPathname) {
+	  let to = typeof toArg === "string" ? parsePath(toArg) : toArg;
+	  let toPathname = toArg === "" || to.pathname === "" ? "/" : to.pathname; // If a pathname is explicitly provided in `to`, it should be relative to the
+	  // route context. This is explained in `Note on `<Link to>` values` in our
+	  // migration guide from v5 as a means of disambiguation between `to` values
+	  // that begin with `/` and those that do not. However, this is problematic for
+	  // `to` values that do not provide a pathname. `to` can simply be a search or
+	  // hash string, in which case we should assume that the navigation is relative
+	  // to the current location's pathname and *not* the route pathname.
+
+	  let from;
+
+	  if (toPathname == null) {
+	    from = locationPathname;
+	  } else {
+	    let routePathnameIndex = routePathnames.length - 1;
+
+	    if (toPathname.startsWith("..")) {
+	      let toSegments = toPathname.split("/"); // Each leading .. segment means "go up one route" instead of "go up one
+	      // URL segment".  This is a key difference from how <a href> works and a
+	      // major reason we call this a "to" value instead of a "href".
+
+	      while (toSegments[0] === "..") {
+	        toSegments.shift();
+	        routePathnameIndex -= 1;
+	      }
+
+	      to.pathname = toSegments.join("/");
+	    } // If there are more ".." segments than parent routes, resolve relative to
+	    // the root / URL.
+
+
+	    from = routePathnameIndex >= 0 ? routePathnames[routePathnameIndex] : "/";
+	  }
+
+	  let path = resolvePath(to, from); // Ensure the pathname has a trailing slash if the original to value had one.
+
+	  if (toPathname && toPathname !== "/" && toPathname.endsWith("/") && !path.pathname.endsWith("/")) {
+	    path.pathname += "/";
+	  }
+
+	  return path;
+	}
+
+	function getToPathname(to) {
+	  // Empty strings should be treated the same as / paths
+	  return to === "" || to.pathname === "" ? "/" : typeof to === "string" ? parsePath(to).pathname : to.pathname;
+	}
+
+	function stripBasename(pathname, basename) {
+	  if (basename === "/") return pathname;
+
+	  if (!pathname.toLowerCase().startsWith(basename.toLowerCase())) {
+	    return null;
+	  }
+
+	  let nextChar = pathname.charAt(basename.length);
+
+	  if (nextChar && nextChar !== "/") {
+	    // pathname does not start with basename/
+	    return null;
+	  }
+
+	  return pathname.slice(basename.length) || "/";
+	}
+
+	const joinPaths = paths => paths.join("/").replace(/\/\/+/g, "/");
+
+	const normalizePathname = pathname => pathname.replace(/\/+$/, "").replace(/^\/*/, "/");
+
+	const normalizeSearch = search => !search || search === "?" ? "" : search.startsWith("?") ? search : "?" + search;
+
+	const normalizeHash = hash => !hash || hash === "#" ? "" : hash.startsWith("#") ? hash : "#" + hash;
+	/**
+	 * Returns the full href for the given "to" value. This is useful for building
+	 * custom links that are also accessible and preserve right-click behavior.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#usehref
+	 */
+
+
+	function useHref(to) {
+	  !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
+	  // router loaded. We can help them understand how to avoid that.
+	  "useHref() may be used only in the context of a <Router> component.")  : void 0;
+	  let {
+	    basename,
+	    navigator
+	  } = react.exports.useContext(NavigationContext);
+	  let {
+	    hash,
+	    pathname,
+	    search
+	  } = useResolvedPath(to);
+	  let joinedPathname = pathname;
+
+	  if (basename !== "/") {
+	    let toPathname = getToPathname(to);
+	    let endsWithSlash = toPathname != null && toPathname.endsWith("/");
+	    joinedPathname = pathname === "/" ? basename + (endsWithSlash ? "/" : "") : joinPaths([basename, pathname]);
+	  }
+
+	  return navigator.createHref({
+	    pathname: joinedPathname,
+	    search,
+	    hash
+	  });
+	}
+	/**
+	 * Returns true if this component is a descendant of a <Router>.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#useinroutercontext
+	 */
+
+
+	function useInRouterContext() {
+	  return react.exports.useContext(LocationContext) != null;
+	}
+	/**
+	 * Returns the current location object, which represents the current URL in web
+	 * browsers.
+	 *
+	 * Note: If you're using this it may mean you're doing some of your own
+	 * "routing" in your app, and we'd like to know what your use case is. We may
+	 * be able to provide something higher-level to better suit your needs.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#uselocation
+	 */
+
+
+	function useLocation() {
+	  !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
+	  // router loaded. We can help them understand how to avoid that.
+	  "useLocation() may be used only in the context of a <Router> component.")  : void 0;
+	  return react.exports.useContext(LocationContext).location;
+	}
+	/**
+	 * The interface for the navigate() function returned from useNavigate().
+	 */
+
+	/**
+	 * Returns an imperative method for changing the location. Used by <Link>s, but
+	 * may also be used by other elements to change the location.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#usenavigate
+	 */
+
+
+	function useNavigate() {
+	  !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
+	  // router loaded. We can help them understand how to avoid that.
+	  "useNavigate() may be used only in the context of a <Router> component.")  : void 0;
+	  let {
+	    basename,
+	    navigator
+	  } = react.exports.useContext(NavigationContext);
+	  let {
+	    matches
+	  } = react.exports.useContext(RouteContext);
+	  let {
+	    pathname: locationPathname
+	  } = useLocation();
+	  let routePathnamesJson = JSON.stringify(matches.map(match => match.pathnameBase));
+	  let activeRef = react.exports.useRef(false);
+	  react.exports.useEffect(() => {
+	    activeRef.current = true;
+	  });
+	  let navigate = react.exports.useCallback(function (to, options) {
+	    if (options === void 0) {
+	      options = {};
+	    }
+
+	    warning(activeRef.current, "You should call navigate() in a React.useEffect(), not when " + "your component is first rendered.") ;
+	    if (!activeRef.current) return;
+
+	    if (typeof to === "number") {
+	      navigator.go(to);
+	      return;
+	    }
+
+	    let path = resolveTo(to, JSON.parse(routePathnamesJson), locationPathname);
+
+	    if (basename !== "/") {
+	      path.pathname = joinPaths([basename, path.pathname]);
+	    }
+
+	    (!!options.replace ? navigator.replace : navigator.push)(path, options.state);
+	  }, [basename, navigator, routePathnamesJson, locationPathname]);
+	  return navigate;
+	}
+	/**
+	 * Returns an object of key/value pairs of the dynamic params from the current
+	 * URL that were matched by the route path.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#useparams
+	 */
+
+
+	function useParams() {
+	  let {
+	    matches
+	  } = react.exports.useContext(RouteContext);
+	  let routeMatch = matches[matches.length - 1];
+	  return routeMatch ? routeMatch.params : {};
+	}
+	/**
+	 * Resolves the pathname of the given `to` value against the current location.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#useresolvedpath
+	 */
+
+
+	function useResolvedPath(to) {
+	  let {
+	    matches
+	  } = react.exports.useContext(RouteContext);
+	  let {
+	    pathname: locationPathname
+	  } = useLocation();
+	  let routePathnamesJson = JSON.stringify(matches.map(match => match.pathnameBase));
+	  return react.exports.useMemo(() => resolveTo(to, JSON.parse(routePathnamesJson), locationPathname), [to, routePathnamesJson, locationPathname]);
+	}
+	/**
+	 * Returns the element of the route that matched the current location, prepared
+	 * with the correct context to render the remainder of the route tree. Route
+	 * elements in the tree must render an <Outlet> to render their child route's
+	 * element.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#useroutes
+	 */
+
+
+	function useRoutes(routes, locationArg) {
+	  !useInRouterContext() ? invariant(false, // TODO: This error is probably because they somehow have 2 versions of the
+	  // router loaded. We can help them understand how to avoid that.
+	  "useRoutes() may be used only in the context of a <Router> component.")  : void 0;
+	  let {
+	    matches: parentMatches
+	  } = react.exports.useContext(RouteContext);
+	  let routeMatch = parentMatches[parentMatches.length - 1];
+	  let parentParams = routeMatch ? routeMatch.params : {};
+	  let parentPathname = routeMatch ? routeMatch.pathname : "/";
+	  let parentPathnameBase = routeMatch ? routeMatch.pathnameBase : "/";
+	  let parentRoute = routeMatch && routeMatch.route;
+
+	  {
+	    // You won't get a warning about 2 different <Routes> under a <Route>
+	    // without a trailing *, but this is a best-effort warning anyway since we
+	    // cannot even give the warning unless they land at the parent route.
+	    //
+	    // Example:
+	    //
+	    // <Routes>
+	    //   {/* This route path MUST end with /* because otherwise
+	    //       it will never match /blog/post/123 */}
+	    //   <Route path="blog" element={<Blog />} />
+	    //   <Route path="blog/feed" element={<BlogFeed />} />
+	    // </Routes>
+	    //
+	    // function Blog() {
+	    //   return (
+	    //     <Routes>
+	    //       <Route path="post/:id" element={<Post />} />
+	    //     </Routes>
+	    //   );
+	    // }
+	    let parentPath = parentRoute && parentRoute.path || "";
+	    warningOnce(parentPathname, !parentRoute || parentPath.endsWith("*"), "You rendered descendant <Routes> (or called `useRoutes()`) at " + ("\"" + parentPathname + "\" (under <Route path=\"" + parentPath + "\">) but the ") + "parent route path has no trailing \"*\". This means if you navigate " + "deeper, the parent won't match anymore and therefore the child " + "routes will never render.\n\n" + ("Please change the parent <Route path=\"" + parentPath + "\"> to <Route ") + ("path=\"" + (parentPath === "/" ? "*" : parentPath + "/*") + "\">."));
+	  }
+
+	  let locationFromContext = useLocation();
+	  let location;
+
+	  if (locationArg) {
+	    var _parsedLocationArg$pa;
+
+	    let parsedLocationArg = typeof locationArg === "string" ? parsePath(locationArg) : locationArg;
+	    !(parentPathnameBase === "/" || ((_parsedLocationArg$pa = parsedLocationArg.pathname) == null ? void 0 : _parsedLocationArg$pa.startsWith(parentPathnameBase))) ? invariant(false, "When overriding the location using `<Routes location>` or `useRoutes(routes, location)`, " + "the location pathname must begin with the portion of the URL pathname that was " + ("matched by all parent routes. The current pathname base is \"" + parentPathnameBase + "\" ") + ("but pathname \"" + parsedLocationArg.pathname + "\" was given in the `location` prop."))  : void 0;
+	    location = parsedLocationArg;
+	  } else {
+	    location = locationFromContext;
+	  }
+
+	  let pathname = location.pathname || "/";
+	  let remainingPathname = parentPathnameBase === "/" ? pathname : pathname.slice(parentPathnameBase.length) || "/";
+	  let matches = matchRoutes(routes, {
+	    pathname: remainingPathname
+	  });
+
+	  {
+	    warning(parentRoute || matches != null, "No routes matched location \"" + location.pathname + location.search + location.hash + "\" ") ;
+	    warning(matches == null || matches[matches.length - 1].route.element !== undefined, "Matched leaf route at location \"" + location.pathname + location.search + location.hash + "\" does not have an element. " + "This means it will render an <Outlet /> with a null value by default resulting in an \"empty\" page.") ;
+	  }
+
+	  return _renderMatches(matches && matches.map(match => Object.assign({}, match, {
+	    params: Object.assign({}, parentParams, match.params),
+	    pathname: joinPaths([parentPathnameBase, match.pathname]),
+	    pathnameBase: match.pathnameBase === "/" ? parentPathnameBase : joinPaths([parentPathnameBase, match.pathnameBase])
+	  })), parentMatches);
+	}
+
+	function _renderMatches(matches, parentMatches) {
+	  if (parentMatches === void 0) {
+	    parentMatches = [];
+	  }
+
+	  if (matches == null) return null;
+	  return matches.reduceRight((outlet, match, index) => {
+	    return /*#__PURE__*/react.exports.createElement(RouteContext.Provider, {
+	      children: match.route.element !== undefined ? match.route.element : outlet,
+	      value: {
+	        outlet,
+	        matches: parentMatches.concat(matches.slice(0, index + 1))
+	      }
+	    });
+	  }, null);
+	}
+	/**
+	 * Declares an element that should be rendered at a certain URL path.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#route
+	 */
+
+
+	function Route(_props) {
+	  invariant(false, "A <Route> is only ever to be used as the child of <Routes> element, " + "never rendered directly. Please wrap your <Route> in a <Routes>.") ;
+	}
+	/**
+	 * Provides location context for the rest of the app.
+	 *
+	 * Note: You usually won't render a <Router> directly. Instead, you'll render a
+	 * router that is more specific to your environment such as a <BrowserRouter>
+	 * in web browsers or a <StaticRouter> for server rendering.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#router
+	 */
+
+
+	function Router(_ref3) {
+	  let {
+	    basename: basenameProp = "/",
+	    children = null,
+	    location: locationProp,
+	    navigationType = Action.Pop,
+	    navigator,
+	    static: staticProp = false
+	  } = _ref3;
+	  !!useInRouterContext() ? invariant(false, "You cannot render a <Router> inside another <Router>." + " You should never have more than one in your app.")  : void 0;
+	  let basename = normalizePathname(basenameProp);
+	  let navigationContext = react.exports.useMemo(() => ({
+	    basename,
+	    navigator,
+	    static: staticProp
+	  }), [basename, navigator, staticProp]);
+
+	  if (typeof locationProp === "string") {
+	    locationProp = parsePath(locationProp);
+	  }
+
+	  let {
+	    pathname = "/",
+	    search = "",
+	    hash = "",
+	    state = null,
+	    key = "default"
+	  } = locationProp;
+	  let location = react.exports.useMemo(() => {
+	    let trailingPathname = stripBasename(pathname, basename);
+
+	    if (trailingPathname == null) {
+	      return null;
+	    }
+
+	    return {
+	      pathname: trailingPathname,
+	      search,
+	      hash,
+	      state,
+	      key
+	    };
+	  }, [basename, pathname, search, hash, state, key]);
+	  warning(location != null, "<Router basename=\"" + basename + "\"> is not able to match the URL " + ("\"" + pathname + search + hash + "\" because it does not start with the ") + "basename, so the <Router> won't render anything.") ;
+
+	  if (location == null) {
+	    return null;
+	  }
+
+	  return /*#__PURE__*/react.exports.createElement(NavigationContext.Provider, {
+	    value: navigationContext
+	  }, /*#__PURE__*/react.exports.createElement(LocationContext.Provider, {
+	    children: children,
+	    value: {
+	      location,
+	      navigationType
+	    }
+	  }));
+	}
+	/**
+	 * A container for a nested tree of <Route> elements that renders the branch
+	 * that best matches the current location.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#routes
+	 */
+
+
+	function Routes(_ref4) {
+	  let {
+	    children,
+	    location
+	  } = _ref4;
+	  return useRoutes(createRoutesFromChildren(children), location);
+	} ///////////////////////////////////////////////////////////////////////////////
+	// UTILS
+	///////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Creates a route config from a React "children" object, which is usually
+	 * either a `<Route>` element or an array of them. Used internally by
+	 * `<Routes>` to create a route config from its children.
+	 *
+	 * @see https://reactrouter.com/docs/en/v6/api#createroutesfromchildren
+	 */
+
+
+	function createRoutesFromChildren(children) {
+	  let routes = [];
+	  react.exports.Children.forEach(children, element => {
+	    if (! /*#__PURE__*/react.exports.isValidElement(element)) {
+	      // Ignore non-elements. This allows people to more easily inline
+	      // conditionals in their route config.
+	      return;
+	    }
+
+	    if (element.type === react.exports.Fragment) {
+	      // Transparently support React.Fragment and its children.
+	      routes.push.apply(routes, createRoutesFromChildren(element.props.children));
+	      return;
+	    }
+
+	    !(element.type === Route) ? invariant(false, "[" + (typeof element.type === "string" ? element.type : element.type.name) + "] is not a <Route> component. All component children of <Routes> must be a <Route> or <React.Fragment>")  : void 0;
+	    let route = {
+	      caseSensitive: element.props.caseSensitive,
+	      element: element.props.element,
+	      index: element.props.index,
+	      path: element.props.path
+	    };
+
+	    if (element.props.children) {
+	      route.children = createRoutesFromChildren(element.props.children);
+	    }
+
+	    routes.push(route);
+	  });
+	  return routes;
 	}
 
 	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * React Router DOM v6.3.0
+	 *
+	 * Copyright (c) Remix Software Inc.
 	 *
 	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
+	 * LICENSE.md file in the root directory of this source tree.
+	 *
+	 * @license MIT
 	 */
 
-	{
-	  var ReactIs = requireReactIs(); // By explicitly using `prop-types` you are opting into new development behavior.
-	  // http://fb.me/prop-types-in-prod
+	function _extends() {
+	  _extends = Object.assign || function (target) {
+	    for (var i = 1; i < arguments.length; i++) {
+	      var source = arguments[i];
 
-	  var throwOnDirectAccess = true;
-	  propTypes.exports = requireFactoryWithTypeCheckers()(ReactIs.isElement, throwOnDirectAccess);
+	      for (var key in source) {
+	        if (Object.prototype.hasOwnProperty.call(source, key)) {
+	          target[key] = source[key];
+	        }
+	      }
+	    }
+
+	    return target;
+	  };
+
+	  return _extends.apply(this, arguments);
 	}
+
+	function _objectWithoutPropertiesLoose(source, excluded) {
+	  if (source == null) return {};
+	  var target = {};
+	  var sourceKeys = Object.keys(source);
+	  var key, i;
+
+	  for (i = 0; i < sourceKeys.length; i++) {
+	    key = sourceKeys[i];
+	    if (excluded.indexOf(key) >= 0) continue;
+	    target[key] = source[key];
+	  }
+
+	  return target;
+	}
+
+	const _excluded = ["onClick", "reloadDocument", "replace", "state", "target", "to"],
+	      _excluded2 = ["aria-current", "caseSensitive", "className", "end", "style", "to", "children"];
+	// COMPONENTS
+	////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * A `<Router>` for use in web browsers. Provides the cleanest URLs.
+	 */
+
+
+	function BrowserRouter(_ref) {
+	  let {
+	    basename,
+	    children,
+	    window
+	  } = _ref;
+	  let historyRef = react.exports.useRef();
+
+	  if (historyRef.current == null) {
+	    historyRef.current = createBrowserHistory({
+	      window
+	    });
+	  }
+
+	  let history = historyRef.current;
+	  let [state, setState] = react.exports.useState({
+	    action: history.action,
+	    location: history.location
+	  });
+	  react.exports.useLayoutEffect(() => history.listen(setState), [history]);
+	  return /*#__PURE__*/react.exports.createElement(Router, {
+	    basename: basename,
+	    children: children,
+	    location: state.location,
+	    navigationType: state.action,
+	    navigator: history
+	  });
+	}
+
+	function isModifiedEvent(event) {
+	  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
+	}
+	/**
+	 * The public API for rendering a history-aware <a>.
+	 */
+
+
+	const Link = /*#__PURE__*/react.exports.forwardRef(function LinkWithRef(_ref4, ref) {
+	  let {
+	    onClick,
+	    reloadDocument,
+	    replace = false,
+	    state,
+	    target,
+	    to
+	  } = _ref4,
+	      rest = _objectWithoutPropertiesLoose(_ref4, _excluded);
+
+	  let href = useHref(to);
+	  let internalOnClick = useLinkClickHandler(to, {
+	    replace,
+	    state,
+	    target
+	  });
+
+	  function handleClick(event) {
+	    if (onClick) onClick(event);
+
+	    if (!event.defaultPrevented && !reloadDocument) {
+	      internalOnClick(event);
+	    }
+	  }
+
+	  return (
+	    /*#__PURE__*/
+	    // eslint-disable-next-line jsx-a11y/anchor-has-content
+	    react.exports.createElement("a", _extends({}, rest, {
+	      href: href,
+	      onClick: handleClick,
+	      ref: ref,
+	      target: target
+	    }))
+	  );
+	});
+
+	{
+	  Link.displayName = "Link";
+	}
+	/**
+	 * A <Link> wrapper that knows if it's "active" or not.
+	 */
+
+
+	const NavLink = /*#__PURE__*/react.exports.forwardRef(function NavLinkWithRef(_ref5, ref) {
+	  let {
+	    "aria-current": ariaCurrentProp = "page",
+	    caseSensitive = false,
+	    className: classNameProp = "",
+	    end = false,
+	    style: styleProp,
+	    to,
+	    children
+	  } = _ref5,
+	      rest = _objectWithoutPropertiesLoose(_ref5, _excluded2);
+
+	  let location = useLocation();
+	  let path = useResolvedPath(to);
+	  let locationPathname = location.pathname;
+	  let toPathname = path.pathname;
+
+	  if (!caseSensitive) {
+	    locationPathname = locationPathname.toLowerCase();
+	    toPathname = toPathname.toLowerCase();
+	  }
+
+	  let isActive = locationPathname === toPathname || !end && locationPathname.startsWith(toPathname) && locationPathname.charAt(toPathname.length) === "/";
+	  let ariaCurrent = isActive ? ariaCurrentProp : undefined;
+	  let className;
+
+	  if (typeof classNameProp === "function") {
+	    className = classNameProp({
+	      isActive
+	    });
+	  } else {
+	    // If the className prop is not a function, we use a default `active`
+	    // class for <NavLink />s that are active. In v5 `active` was the default
+	    // value for `activeClassName`, but we are removing that API and can still
+	    // use the old default behavior for a cleaner upgrade path and keep the
+	    // simple styling rules working as they currently do.
+	    className = [classNameProp, isActive ? "active" : null].filter(Boolean).join(" ");
+	  }
+
+	  let style = typeof styleProp === "function" ? styleProp({
+	    isActive
+	  }) : styleProp;
+	  return /*#__PURE__*/react.exports.createElement(Link, _extends({}, rest, {
+	    "aria-current": ariaCurrent,
+	    className: className,
+	    ref: ref,
+	    style: style,
+	    to: to
+	  }), typeof children === "function" ? children({
+	    isActive
+	  }) : children);
+	});
+
+	{
+	  NavLink.displayName = "NavLink";
+	} ////////////////////////////////////////////////////////////////////////////////
+	// HOOKS
+	////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Handles the click behavior for router `<Link>` components. This is useful if
+	 * you need to create custom `<Link>` components with the same click behavior we
+	 * use in our exported `<Link>`.
+	 */
+
+
+	function useLinkClickHandler(to, _temp) {
+	  let {
+	    target,
+	    replace: replaceProp,
+	    state
+	  } = _temp === void 0 ? {} : _temp;
+	  let navigate = useNavigate();
+	  let location = useLocation();
+	  let path = useResolvedPath(to);
+	  return react.exports.useCallback(event => {
+	    if (event.button === 0 && ( // Ignore everything but left clicks
+	    !target || target === "_self") && // Let browser handle "target=_blank" etc.
+	    !isModifiedEvent(event) // Ignore clicks with modifier keys
+	    ) {
+	      event.preventDefault(); // If the URL hasn't changed, a regular <a> will do a replace instead of
+	      // a push, so do the same here.
+
+	      let replace = !!replaceProp || createPath(location) === createPath(path);
+	      navigate(to, {
+	        replace,
+	        state
+	      });
+	    }
+	  }, [location, navigate, path, replaceProp, state, target, to]);
+	}
+
+	/**
+	 * Same as React's useReducer, but also executes middleware functions on every
+	 * action dispatch.
+	 *
+	 * A middleware is a powerful and flexible function that can
+	 * - dispatch arbitrary actions, e.g. at an interval
+	 * - inspect all the dispatched actions
+	 * - change an action before it reaches the reducer or next middleware
+	 * - stop an action from propagating altogether
+	 *
+	 * The middleware interface is designed to be exactly the same as Redux's
+	 * middlewares - the middleware function must have the following form:
+	 ```js
+	  ({getState}) => {
+	    return (next) =>
+	      return (action) => {
+	        next(action);
+	      }
+	    }
+	  }
+	 ```
+	 * A middleware function must call `next(action)` to propagate the action to
+	 * the final action dispatch and reducer, otherwise the action will be ignored.
+	 *
+	 * Middlewares are executed in reverse order.
+	 *
+	 * @param {Array<Function>} middlewares Middleware functions, executed in reverse order
+	 * @param {Function} reducer Passed to React's useReducer
+	 * @param {any} initOrInitialValue Passed to React's useReducer
+	 * @param {any} init Passed to React's useReducer
+	 * @return {Array} of [state, dispatch]
+	 */
+
+	const useReducerWithMiddleware = (middlewares, reducer, initOrInitialValue, init) => {
+	  /*
+	   * In order to give access to last state to middleware functions, need to
+	   * provide them a value which itself doesn't change to avoid constantly
+	   * re-defining the middlewares. `useRef` provides just the "box" which we can
+	   * mutate for this purpose.
+	   */
+	  const lastStateRef = react.exports.useRef(); // `useMemo` will be discussed in next lecture
+
+	  const refUpdatingReducer = react.exports.useMemo(() => (prevState, action) => {
+	    const newState = reducer(prevState, action);
+	    lastStateRef.current = newState;
+	    return newState;
+	  }, [lastStateRef]);
+	  const [state, dispatch] = react.exports.useReducer(refUpdatingReducer, initOrInitialValue, init);
+	  const dispatchWithMiddlewares = react.exports.useMemo(() => {
+	    const middlewareInit = {
+	      getStateBefore: () => lastStateRef.current
+	    };
+	    return middlewares.concat(dispatch).reverse().reduce((acc, middleware) => {
+	      /*
+	       * Initialize the middleware with means to get state and the next
+	       * middleware/final dispatch.
+	       */
+	      return middleware(middlewareInit)(acc);
+	    });
+	  }, [middlewares, dispatch, lastStateRef]);
+	  return [state, dispatchWithMiddlewares];
+	};
+
+	const LoggingMiddleware = _ref => {
+	  let {
+	    getStateBefore
+	  } = _ref;
+	  // Initialization code if any goes here
+	  let time;
+	  return next => {
+	    return action => {
+	      const stateBefore = getStateBefore();
+
+	      if (!stateBefore) {
+	        localStorage.setItem('time', Date.now());
+	      } else if (action.type === "toggleRequest" && !stateBefore.requestState.inFlight) {
+	        localStorage.setItem('time', Date.now());
+	      } else if (action.type === "toggleRequest" && stateBefore.requestState.inFlight) {
+	        time = localStorage.getItem("time");
+	        console.log(Date.now() - time);
+	      } // eslint-disable-next-line no-console
+
+
+	      console.log("Dispatching action", action, "while state is", stateBefore);
+	      /*
+	       * Delegate to the next middleware or finally - the action dispatch
+	       */
+
+	      next(action);
+	      /*
+	       *
+	       * One crucial different to Redux's middlewares is that as React can
+	       * delay calling the reducer for internal optimizations, calling
+	       * `next(action)` does not immediately call the reducer and thus there is
+	       * no way to get "post-action" state in the middleware function.
+	       */
+	    };
+	  };
+	};
+
+	let count = 0;
+	const changeRounds = newRounds => ({
+	  type: "changeRounds",
+	  payload: newRounds
+	});
+	const changeName = name => ({
+	  type: "changeName",
+	  payload: name
+	});
+	const changeGameState = newGameState => ({
+	  type: "changeGameState",
+	  payload: newGameState
+	});
+	const startTime = () => ({
+	  type: "startTime"
+	});
+	const endTime = () => ({
+	  type: "endTime"
+	});
+	const changeMemory = memoryObject => ({
+	  type: "changeMemory",
+	  payload: memoryObject
+	});
+	const changeStorage = newArray => ({
+	  type: "changeStorage",
+	  payload: newArray
+	});
+	const resetMemory = () => ({
+	  type: "resetMemory"
+	});
+	const resetStorage = () => ({
+	  type: "resetStorage"
+	});
+	const resetState = () => ({
+	  type: "resetState"
+	});
+	const deleteFromOngoing = gameId => ({
+	  type: "deleteFromOngoing",
+	  payload: gameId
+	});
+	const updateState = gameId => ({
+	  type: "updateState",
+	  payload: gameId
+	});
+	const initializer = () => ({
+	  rounds: 3,
+	  name: "",
+	  id: null,
+	  playerId: null,
+	  count: 1,
+	  gameState: "start",
+	  firstRender: true,
+	  time: null,
+	  memory: [],
+	  storage: {},
+	  ongoing: {},
+	  sign: null,
+	  firstNum: null,
+	  secondNum: null,
+	  skipUse: 0,
+	  CAL: 0,
+	  requestState: {
+	    inFlight: false,
+	    error: null
+	  },
+	  connecting: false,
+	  connected: false,
+	  connectionError: null,
+	  webSocketConnection: null,
+	  data: []
+	});
+	const toggleRequest = requestState => ({
+	  type: "toggleRequest",
+	  payload: requestState
+	});
+	const createPostSucceeded = gameObject => ({
+	  type: "createPostSucceeded",
+	  payload: gameObject
+	});
+	const answerPostSucceeded = gameObject => ({
+	  type: "answerPostSucceeded",
+	  payload: gameObject
+	});
+	const changeSign = newSign => ({
+	  type: "changeSign",
+	  payload: newSign
+	});
+	const changeFirstNum = newFirstNum => ({
+	  type: "changeFirstNum",
+	  payload: newFirstNum
+	});
+	const changeSecondNum = newSecondNum => ({
+	  type: "changeSecondNum",
+	  payload: newSecondNum
+	});
+	const changeSkipUse = newSkipuse => ({
+	  type: "changeSkipUse",
+	  payload: newSkipuse
+	});
+	const onOpen = () => ({
+	  type: "CONNECTED",
+	  payload: null
+	});
+	const onConnecting = websocketConnection => ({
+	  type: "CONNECTING",
+	  payload: websocketConnection
+	});
+	const onMessage = parsedMessage => ({
+	  type: "MESSAGE_RECEIVED",
+	  payload: parsedMessage
+	}); // note that reason is an object of format {reason: string}
+
+	const onClose = reason => ({
+	  type: "DISCONNECTED",
+	  payload: reason
+	});
+
+	const setRequestState = (state, requestState) => {
+	  return { ...state,
+	    requestState: requestState
+	  };
+	};
+
+	const timeSpent = state => ({ ...state,
+	  ongoing: { ...state.ongoing,
+	    [state.id]: { ...state.ongoing[state.id],
+	      timeSpent: Date.now() - state.ongoing[state.id].time
+	    }
+	  }
+	});
+
+	const createGame$1 = (state, gameObject) => ({ ...state,
+	  id: gameObject.id,
+	  sign: gameObject.nextExpression.operator,
+	  firstNum: gameObject.nextExpression.lhs,
+	  secondNum: gameObject.nextExpression.rhs,
+	  skipUse: gameObject.skipsRemaining,
+	  CAL: gameObject.nextExpression.correctAnswerLength,
+	  ongoing: { ...state.ongoing,
+	    [gameObject.id]: {
+	      name: state.name,
+	      id: gameObject.id,
+	      firstNum: gameObject.nextExpression.lhs,
+	      secondNum: gameObject.nextExpression.rhs,
+	      sign: gameObject.nextExpression.operator,
+	      skipUse: gameObject.skipUse,
+	      CAL: gameObject.nextExpression.correctAnswerLength,
+	      memory: [],
+	      time: Date.now()
+	    }
+	  }
+	});
+
+	const answerGame$1 = (state, gameObject) => ({ ...state,
+	  firstNum: gameObject.game.nextExpression.lhs,
+	  secondNum: gameObject.game.nextExpression.rhs,
+	  sign: gameObject.game.nextExpression.operator,
+	  skipUse: gameObject.game.skipsRemaining,
+	  CAL: gameObject.game.nextExpression.correctAnswerLength,
+	  ongoing: { ...state.ongoing,
+	    [gameObject.game.id]: { ...state.ongoing[gameObject.game.id],
+	      firstNum: gameObject.game.nextExpression.lhs,
+	      secondNum: gameObject.game.nextExpression.rhs,
+	      sign: gameObject.game.nextExpression.operator,
+	      skipUse: gameObject.game.skipUse,
+	      CAL: gameObject.game.nextExpression.correctAnswerLength
+	    }
+	  }
+	});
+
+	const updater = (state, gameId) => {
+	  return { ...state,
+	    id: state.ongoing[gameId].id,
+	    name: state.ongoing[gameId].name,
+	    firstNum: state.ongoing[gameId].firstNum,
+	    secondNum: state.ongoing[gameId].secondNum,
+	    sign: state.ongoing[gameId].sign,
+	    skipUse: state.ongoing[gameId].skipUse,
+	    CAL: state.ongoing[gameId].CAL,
+	    gameState: state.ongoing[gameId].gameState,
+	    memory: state.ongoing[gameId].memory
+	  };
+	};
+
+	const deleteOngoing = (state, gameId) => {
+	  const current = state.ongoing;
+	  delete current[gameId];
+	  return { ...state,
+	    ongoing: current
+	  };
+	};
+
+	const messageReceived = (state, parsedMessage) => {
+	  // parsed message is an object of the format {eventName: String, payload: Object}
+	  if (parsedMessage.eventName === 'online-players') {
+	    return { ...state,
+	      data: parsedMessage.payload
+	    };
+	  } else {
+	    return { ...state,
+	      playerId: parsedMessage.payload.playerId
+	    };
+	  }
+	};
+
+	const setSign = (state, newSign) => ({ ...state,
+	  sign: newSign
+	});
+
+	const setFirstNum = (state, newFirstNum) => ({ ...state,
+	  firstNum: newFirstNum
+	});
+
+	const setSecondNum = (state, newSecondNum) => ({ ...state,
+	  secondNum: newSecondNum
+	});
+
+	const setSkipuse = (state, newSkipuse) => ({ ...state,
+	  skipUse: newSkipuse
+	});
+
+	const setRounds = (state, newRounds) => ({ ...state,
+	  rounds: newRounds
+	});
+
+	const setCount = (state, newCount) => {
+	  return { ...state,
+	    count: newCount
+	  };
+	};
+
+	const setGameState = (state, newGameState) => ({ ...state,
+	  gameState: newGameState,
+	  ongoing: { ...state.ongoing,
+	    [state.id]: { ...state.ongoing[state.id],
+	      gameState: newGameState
+	    }
+	  }
+	});
+
+	const setTime = state => ({ ...state,
+	  time: Date.now()
+	});
+
+	const updateMemory = (state, memoryObject) => ({ ...state,
+	  memory: state.memory.concat([{ ...memoryObject
+	  }]),
+	  ongoing: { ...state.ongoing,
+	    [state.id]: { ...state.ongoing[state.id],
+	      memory: state.ongoing[state.id].memory.concat([{ ...memoryObject
+	      }])
+	    }
+	  }
+	});
+
+	const clearMemory = state => ({ ...state,
+	  memory: []
+	});
+
+	const updateStorage = (state, newArray) => {
+	  count++;
+	  const key = `game${count}`;
+	  return { ...state,
+	    storage: { ...state.storage,
+	      [key]: newArray
+	    }
+	  };
+	};
+
+	const clearStorage = state => ({ ...state,
+	  storage: {}
+	});
+
+	const reducer = (state, action) => {
+	  switch (action.type) {
+	    case "changeRounds":
+	      return setRounds(state, action.payload);
+
+	    case "changeName":
+	      return { ...state,
+	        name: action.payload
+	      };
+
+	    case "changeCount":
+	      return setCount(state, action.payload);
+
+	    case "changeGameState":
+	      return setGameState(state, action.payload);
+
+	    case "firstRender":
+	      return { ...state,
+	        firstRender: action.payload
+	      };
+
+	    case "startTime":
+	      return setTime(state);
+
+	    case "endTime":
+	      return timeSpent(state);
+
+	    case "changeMemory":
+	      return updateMemory(state, action.payload);
+
+	    case "changeStorage":
+	      return updateStorage(state, action.payload);
+
+	    case "resetState":
+	      return { ...state,
+	        rounds: 3,
+	        name: "",
+	        id: null,
+	        playerId: null,
+	        firstNum: null,
+	        secondNum: null,
+	        skipUse: 0,
+	        CAL: 0,
+	        requestState: {
+	          inFlight: false,
+	          error: null
+	        },
+	        gameState: null,
+	        memory: []
+	      };
+
+	    case "deleteFromOngoing":
+	      return deleteOngoing(state, action.payload);
+
+	    case "updateState":
+	      return updater(state, action.payload);
+
+	    case "resetMemory":
+	      return clearMemory(state);
+
+	    case "resetStorage":
+	      return clearStorage(state);
+
+	    case "changeSign":
+	      return setSign(state, action.payload);
+
+	    case "changeFirstNum":
+	      return setFirstNum(state, action.payload);
+
+	    case "changeSecondNum":
+	      return setSecondNum(state, action.payload);
+
+	    case "changeSkipUse":
+	      return setSkipuse(state, action.payload);
+
+	    case "createPostSucceeded":
+	      return createGame$1(state, action.payload);
+
+	    case "toggleRequest":
+	      return setRequestState(state, action.payload);
+
+	    case "answerPostSucceeded":
+	      return answerGame$1(state, action.payload);
+
+	    case "CONNECTED":
+	      return { ...state,
+	        connected: true,
+	        connecting: false,
+	        connectionError: null
+	      };
+
+	    case "CONNECTING":
+	      return { ...state,
+	        connected: false,
+	        connecting: true,
+	        webSocketConnection: action.payload,
+	        connectionError: null
+	      };
+
+	    case "MESSAGE_RECEIVED":
+	      return messageReceived(state, action.payload);
+
+	    case "DISCONNECTED":
+	      return { ...state,
+	        connecting: false,
+	        connected: false,
+	        connectionError: action.payload
+	      };
+
+	    default:
+	      throw new Error("Invalid reducer usage");
+	  }
+	};
 
 	var jsxRuntime = {exports: {}};
 
@@ -10709,36 +11485,1308 @@
 	  }
 	})(jsxRuntime);
 
+	const StateContext = /*#__PURE__*/react.exports.createContext();
+	const useGlobalState = () => react.exports.useContext(StateContext);
+	const StateProvider = _ref => {
+	  let {
+	    children
+	  } = _ref;
+	  const [state, dispatch] = useReducerWithMiddleware([LoggingMiddleware], reducer, undefined, initializer);
+
+	  const resetState$1 = () => dispatch(resetState());
+
+	  const deleteFromOngoing$1 = gameId => dispatch(deleteFromOngoing(gameId));
+
+	  const updateState$1 = gameObject => dispatch(updateState(gameObject));
+
+	  const setRounds = rounds => dispatch(changeRounds(rounds));
+
+	  const setName = name => dispatch(changeName(name));
+
+	  const setGameState = gameState => dispatch(changeGameState(gameState));
+
+	  const getTimeSpent = () => dispatch(endTime());
+
+	  const setTime = () => dispatch(startTime());
+
+	  const setMemory = memoryObject => dispatch(changeMemory(memoryObject));
+
+	  const clearMemory = () => dispatch(resetMemory());
+
+	  const clearStorage = () => dispatch(resetStorage());
+
+	  const setStorage = memory => dispatch(changeStorage(memory));
+
+	  const setSign = sign => dispatch(changeSign(sign));
+
+	  const setFirstNum = newFirstNum => dispatch(changeFirstNum(newFirstNum));
+
+	  const setSecondNum = newSecondNum => dispatch(changeSecondNum(newSecondNum));
+
+	  const setSkipUse = newSkipUse => dispatch(changeSkipUse(newSkipUse));
+
+	  const setRequestState = requestState => dispatch(toggleRequest(requestState));
+
+	  const createSucceeded = gameObject => dispatch(createPostSucceeded(gameObject));
+
+	  const answerSucceeded = gameObject => dispatch(answerPostSucceeded(gameObject));
+
+	  const onOpen$1 = () => dispatch(onOpen());
+
+	  const onConnecting$1 = websocketconnection => dispatch(onConnecting(websocketconnection));
+
+	  const onMessage$1 = parsedMessage => dispatch(onMessage(parsedMessage));
+
+	  const onClose$1 = reason => dispatch(onClose(reason));
+
+	  const stateManager = {
+	    state,
+	    setRounds,
+	    setName,
+	    setGameState,
+	    deleteFromOngoing: deleteFromOngoing$1,
+	    setTime,
+	    getTimeSpent,
+	    setMemory,
+	    resetState: resetState$1,
+	    updateState: updateState$1,
+	    clearMemory,
+	    clearStorage,
+	    setStorage,
+	    setSign,
+	    setFirstNum,
+	    setSecondNum,
+	    setSkipUse,
+	    setRequestState,
+	    createSucceeded,
+	    answerSucceeded,
+	    onOpen: onOpen$1,
+	    onConnecting: onConnecting$1,
+	    onMessage: onMessage$1,
+	    onClose: onClose$1
+	  };
+	  return /*#__PURE__*/jsxRuntime.exports.jsx(StateContext.Provider, {
+	    value: stateManager,
+	    children: children
+	  });
+	};
+
+	const Welcome = props => {
+	  return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
+	    className: "display",
+	    children: /*#__PURE__*/jsxRuntime.exports.jsx("p", {
+	      children: "Hi! This is James's math game, choose your parameters and get to calculating."
+	    })
+	  });
+	};
+
+	var propTypes = {exports: {}};
+
+	var reactIs$1 = {exports: {}};
+
+	var reactIs_development = {};
+
+	/** @license React v16.13.1
+	 * react-is.development.js
+	 *
+	 * Copyright (c) Facebook, Inc. and its affiliates.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+	var hasRequiredReactIs_development;
+
+	function requireReactIs_development() {
+	  if (hasRequiredReactIs_development) return reactIs_development;
+	  hasRequiredReactIs_development = 1;
+
+	  {
+	    (function () {
+	      // nor polyfill, then a plain number is used for performance.
+
+	      var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+	      var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+	      var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+	      var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+	      var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+	      var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+	      var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+	      var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+	      // (unstable) APIs that have been removed. Can we remove the symbols?
+
+	      var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
+	      var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+	      var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+	      var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+	      var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
+	      var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+	      var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+	      var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+	      var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
+	      var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
+	      var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
+
+	      function isValidElementType(type) {
+	        return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+	        type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
+	      }
+
+	      function typeOf(object) {
+	        if (typeof object === 'object' && object !== null) {
+	          var $$typeof = object.$$typeof;
+
+	          switch ($$typeof) {
+	            case REACT_ELEMENT_TYPE:
+	              var type = object.type;
+
+	              switch (type) {
+	                case REACT_ASYNC_MODE_TYPE:
+	                case REACT_CONCURRENT_MODE_TYPE:
+	                case REACT_FRAGMENT_TYPE:
+	                case REACT_PROFILER_TYPE:
+	                case REACT_STRICT_MODE_TYPE:
+	                case REACT_SUSPENSE_TYPE:
+	                  return type;
+
+	                default:
+	                  var $$typeofType = type && type.$$typeof;
+
+	                  switch ($$typeofType) {
+	                    case REACT_CONTEXT_TYPE:
+	                    case REACT_FORWARD_REF_TYPE:
+	                    case REACT_LAZY_TYPE:
+	                    case REACT_MEMO_TYPE:
+	                    case REACT_PROVIDER_TYPE:
+	                      return $$typeofType;
+
+	                    default:
+	                      return $$typeof;
+	                  }
+
+	              }
+
+	            case REACT_PORTAL_TYPE:
+	              return $$typeof;
+	          }
+	        }
+
+	        return undefined;
+	      } // AsyncMode is deprecated along with isAsyncMode
+
+
+	      var AsyncMode = REACT_ASYNC_MODE_TYPE;
+	      var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
+	      var ContextConsumer = REACT_CONTEXT_TYPE;
+	      var ContextProvider = REACT_PROVIDER_TYPE;
+	      var Element = REACT_ELEMENT_TYPE;
+	      var ForwardRef = REACT_FORWARD_REF_TYPE;
+	      var Fragment = REACT_FRAGMENT_TYPE;
+	      var Lazy = REACT_LAZY_TYPE;
+	      var Memo = REACT_MEMO_TYPE;
+	      var Portal = REACT_PORTAL_TYPE;
+	      var Profiler = REACT_PROFILER_TYPE;
+	      var StrictMode = REACT_STRICT_MODE_TYPE;
+	      var Suspense = REACT_SUSPENSE_TYPE;
+	      var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
+
+	      function isAsyncMode(object) {
+	        {
+	          if (!hasWarnedAboutDeprecatedIsAsyncMode) {
+	            hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
+
+	            console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
+	          }
+	        }
+	        return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
+	      }
+
+	      function isConcurrentMode(object) {
+	        return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
+	      }
+
+	      function isContextConsumer(object) {
+	        return typeOf(object) === REACT_CONTEXT_TYPE;
+	      }
+
+	      function isContextProvider(object) {
+	        return typeOf(object) === REACT_PROVIDER_TYPE;
+	      }
+
+	      function isElement(object) {
+	        return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+	      }
+
+	      function isForwardRef(object) {
+	        return typeOf(object) === REACT_FORWARD_REF_TYPE;
+	      }
+
+	      function isFragment(object) {
+	        return typeOf(object) === REACT_FRAGMENT_TYPE;
+	      }
+
+	      function isLazy(object) {
+	        return typeOf(object) === REACT_LAZY_TYPE;
+	      }
+
+	      function isMemo(object) {
+	        return typeOf(object) === REACT_MEMO_TYPE;
+	      }
+
+	      function isPortal(object) {
+	        return typeOf(object) === REACT_PORTAL_TYPE;
+	      }
+
+	      function isProfiler(object) {
+	        return typeOf(object) === REACT_PROFILER_TYPE;
+	      }
+
+	      function isStrictMode(object) {
+	        return typeOf(object) === REACT_STRICT_MODE_TYPE;
+	      }
+
+	      function isSuspense(object) {
+	        return typeOf(object) === REACT_SUSPENSE_TYPE;
+	      }
+
+	      reactIs_development.AsyncMode = AsyncMode;
+	      reactIs_development.ConcurrentMode = ConcurrentMode;
+	      reactIs_development.ContextConsumer = ContextConsumer;
+	      reactIs_development.ContextProvider = ContextProvider;
+	      reactIs_development.Element = Element;
+	      reactIs_development.ForwardRef = ForwardRef;
+	      reactIs_development.Fragment = Fragment;
+	      reactIs_development.Lazy = Lazy;
+	      reactIs_development.Memo = Memo;
+	      reactIs_development.Portal = Portal;
+	      reactIs_development.Profiler = Profiler;
+	      reactIs_development.StrictMode = StrictMode;
+	      reactIs_development.Suspense = Suspense;
+	      reactIs_development.isAsyncMode = isAsyncMode;
+	      reactIs_development.isConcurrentMode = isConcurrentMode;
+	      reactIs_development.isContextConsumer = isContextConsumer;
+	      reactIs_development.isContextProvider = isContextProvider;
+	      reactIs_development.isElement = isElement;
+	      reactIs_development.isForwardRef = isForwardRef;
+	      reactIs_development.isFragment = isFragment;
+	      reactIs_development.isLazy = isLazy;
+	      reactIs_development.isMemo = isMemo;
+	      reactIs_development.isPortal = isPortal;
+	      reactIs_development.isProfiler = isProfiler;
+	      reactIs_development.isStrictMode = isStrictMode;
+	      reactIs_development.isSuspense = isSuspense;
+	      reactIs_development.isValidElementType = isValidElementType;
+	      reactIs_development.typeOf = typeOf;
+	    })();
+	  }
+
+	  return reactIs_development;
+	}
+
+	var hasRequiredReactIs;
+
+	function requireReactIs() {
+	  if (hasRequiredReactIs) return reactIs$1.exports;
+	  hasRequiredReactIs = 1;
+
+	  (function (module) {
+
+	    {
+	      module.exports = requireReactIs_development();
+	    }
+	  })(reactIs$1);
+
+	  return reactIs$1.exports;
+	}
+
+	/*
+	object-assign
+	(c) Sindre Sorhus
+	@license MIT
+	*/
+	var objectAssign;
+	var hasRequiredObjectAssign;
+
+	function requireObjectAssign() {
+	  if (hasRequiredObjectAssign) return objectAssign;
+	  hasRequiredObjectAssign = 1;
+	  /* eslint-disable no-unused-vars */
+
+
+	  var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+	  var hasOwnProperty = Object.prototype.hasOwnProperty;
+	  var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	  function toObject(val) {
+	    if (val === null || val === undefined) {
+	      throw new TypeError('Object.assign cannot be called with null or undefined');
+	    }
+
+	    return Object(val);
+	  }
+
+	  function shouldUseNative() {
+	    try {
+	      if (!Object.assign) {
+	        return false;
+	      } // Detect buggy property enumeration order in older V8 versions.
+	      // https://bugs.chromium.org/p/v8/issues/detail?id=4118
+
+
+	      var test1 = new String('abc'); // eslint-disable-line no-new-wrappers
+
+	      test1[5] = 'de';
+
+	      if (Object.getOwnPropertyNames(test1)[0] === '5') {
+	        return false;
+	      } // https://bugs.chromium.org/p/v8/issues/detail?id=3056
+
+
+	      var test2 = {};
+
+	      for (var i = 0; i < 10; i++) {
+	        test2['_' + String.fromCharCode(i)] = i;
+	      }
+
+	      var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+	        return test2[n];
+	      });
+
+	      if (order2.join('') !== '0123456789') {
+	        return false;
+	      } // https://bugs.chromium.org/p/v8/issues/detail?id=3056
+
+
+	      var test3 = {};
+	      'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+	        test3[letter] = letter;
+	      });
+
+	      if (Object.keys(Object.assign({}, test3)).join('') !== 'abcdefghijklmnopqrst') {
+	        return false;
+	      }
+
+	      return true;
+	    } catch (err) {
+	      // We don't expect any of the above to throw, but better to be safe.
+	      return false;
+	    }
+	  }
+
+	  objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
+	    var from;
+	    var to = toObject(target);
+	    var symbols;
+
+	    for (var s = 1; s < arguments.length; s++) {
+	      from = Object(arguments[s]);
+
+	      for (var key in from) {
+	        if (hasOwnProperty.call(from, key)) {
+	          to[key] = from[key];
+	        }
+	      }
+
+	      if (getOwnPropertySymbols) {
+	        symbols = getOwnPropertySymbols(from);
+
+	        for (var i = 0; i < symbols.length; i++) {
+	          if (propIsEnumerable.call(from, symbols[i])) {
+	            to[symbols[i]] = from[symbols[i]];
+	          }
+	        }
+	      }
+	    }
+
+	    return to;
+	  };
+	  return objectAssign;
+	}
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+	var ReactPropTypesSecret_1;
+	var hasRequiredReactPropTypesSecret;
+
+	function requireReactPropTypesSecret() {
+	  if (hasRequiredReactPropTypesSecret) return ReactPropTypesSecret_1;
+	  hasRequiredReactPropTypesSecret = 1;
+
+	  var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+	  ReactPropTypesSecret_1 = ReactPropTypesSecret;
+	  return ReactPropTypesSecret_1;
+	}
+
+	var has;
+	var hasRequiredHas;
+
+	function requireHas() {
+	  if (hasRequiredHas) return has;
+	  hasRequiredHas = 1;
+	  has = Function.call.bind(Object.prototype.hasOwnProperty);
+	  return has;
+	}
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+	var checkPropTypes_1;
+	var hasRequiredCheckPropTypes;
+
+	function requireCheckPropTypes() {
+	  if (hasRequiredCheckPropTypes) return checkPropTypes_1;
+	  hasRequiredCheckPropTypes = 1;
+
+	  var printWarning = function () {};
+
+	  {
+	    var ReactPropTypesSecret = requireReactPropTypesSecret();
+	    var loggedTypeFailures = {};
+	    var has = requireHas();
+
+	    printWarning = function (text) {
+	      var message = 'Warning: ' + text;
+
+	      if (typeof console !== 'undefined') {
+	        console.error(message);
+	      }
+
+	      try {
+	        // --- Welcome to debugging React ---
+	        // This error was thrown as a convenience so that you can use this stack
+	        // to find the callsite that caused this warning to fire.
+	        throw new Error(message);
+	      } catch (x) {
+	        /**/
+	      }
+	    };
+	  }
+	  /**
+	   * Assert that the values match with the type specs.
+	   * Error messages are memorized and will only be shown once.
+	   *
+	   * @param {object} typeSpecs Map of name to a ReactPropType
+	   * @param {object} values Runtime values that need to be type-checked
+	   * @param {string} location e.g. "prop", "context", "child context"
+	   * @param {string} componentName Name of the component for error messages.
+	   * @param {?Function} getStack Returns the component stack.
+	   * @private
+	   */
+
+
+	  function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
+	    {
+	      for (var typeSpecName in typeSpecs) {
+	        if (has(typeSpecs, typeSpecName)) {
+	          var error; // Prop type validation may throw. In case they do, we don't want to
+	          // fail the render phase where it didn't fail before. So we log it.
+	          // After these have been cleaned up, we'll let them throw.
+
+	          try {
+	            // This is intentionally an invariant that gets caught. It's the same
+	            // behavior as without this statement except with a better message.
+	            if (typeof typeSpecs[typeSpecName] !== 'function') {
+	              var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.' + 'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.');
+	              err.name = 'Invariant Violation';
+	              throw err;
+	            }
+
+	            error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
+	          } catch (ex) {
+	            error = ex;
+	          }
+
+	          if (error && !(error instanceof Error)) {
+	            printWarning((componentName || 'React class') + ': type specification of ' + location + ' `' + typeSpecName + '` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a ' + typeof error + '. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).');
+	          }
+
+	          if (error instanceof Error && !(error.message in loggedTypeFailures)) {
+	            // Only monitor this failure once because there tends to be a lot of the
+	            // same error.
+	            loggedTypeFailures[error.message] = true;
+	            var stack = getStack ? getStack() : '';
+	            printWarning('Failed ' + location + ' type: ' + error.message + (stack != null ? stack : ''));
+	          }
+	        }
+	      }
+	    }
+	  }
+	  /**
+	   * Resets warning cache when testing.
+	   *
+	   * @private
+	   */
+
+
+	  checkPropTypes.resetWarningCache = function () {
+	    {
+	      loggedTypeFailures = {};
+	    }
+	  };
+
+	  checkPropTypes_1 = checkPropTypes;
+	  return checkPropTypes_1;
+	}
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+	var factoryWithTypeCheckers;
+	var hasRequiredFactoryWithTypeCheckers;
+
+	function requireFactoryWithTypeCheckers() {
+	  if (hasRequiredFactoryWithTypeCheckers) return factoryWithTypeCheckers;
+	  hasRequiredFactoryWithTypeCheckers = 1;
+
+	  var ReactIs = requireReactIs();
+	  var assign = requireObjectAssign();
+	  var ReactPropTypesSecret = requireReactPropTypesSecret();
+	  var has = requireHas();
+	  var checkPropTypes = requireCheckPropTypes();
+
+	  var printWarning = function () {};
+
+	  {
+	    printWarning = function (text) {
+	      var message = 'Warning: ' + text;
+
+	      if (typeof console !== 'undefined') {
+	        console.error(message);
+	      }
+
+	      try {
+	        // --- Welcome to debugging React ---
+	        // This error was thrown as a convenience so that you can use this stack
+	        // to find the callsite that caused this warning to fire.
+	        throw new Error(message);
+	      } catch (x) {}
+	    };
+	  }
+
+	  function emptyFunctionThatReturnsNull() {
+	    return null;
+	  }
+
+	  factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
+	    /* global Symbol */
+	    var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+	    var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+	    /**
+	     * Returns the iterator method function contained on the iterable object.
+	     *
+	     * Be sure to invoke the function with the iterable as context:
+	     *
+	     *     var iteratorFn = getIteratorFn(myIterable);
+	     *     if (iteratorFn) {
+	     *       var iterator = iteratorFn.call(myIterable);
+	     *       ...
+	     *     }
+	     *
+	     * @param {?object} maybeIterable
+	     * @return {?function}
+	     */
+
+	    function getIteratorFn(maybeIterable) {
+	      var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+
+	      if (typeof iteratorFn === 'function') {
+	        return iteratorFn;
+	      }
+	    }
+	    /**
+	     * Collection of methods that allow declaration and validation of props that are
+	     * supplied to React components. Example usage:
+	     *
+	     *   var Props = require('ReactPropTypes');
+	     *   var MyArticle = React.createClass({
+	     *     propTypes: {
+	     *       // An optional string prop named "description".
+	     *       description: Props.string,
+	     *
+	     *       // A required enum prop named "category".
+	     *       category: Props.oneOf(['News','Photos']).isRequired,
+	     *
+	     *       // A prop named "dialog" that requires an instance of Dialog.
+	     *       dialog: Props.instanceOf(Dialog).isRequired
+	     *     },
+	     *     render: function() { ... }
+	     *   });
+	     *
+	     * A more formal specification of how these methods are used:
+	     *
+	     *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+	     *   decl := ReactPropTypes.{type}(.isRequired)?
+	     *
+	     * Each and every declaration produces a function with the same signature. This
+	     * allows the creation of custom validation functions. For example:
+	     *
+	     *  var MyLink = React.createClass({
+	     *    propTypes: {
+	     *      // An optional string or URI prop named "href".
+	     *      href: function(props, propName, componentName) {
+	     *        var propValue = props[propName];
+	     *        if (propValue != null && typeof propValue !== 'string' &&
+	     *            !(propValue instanceof URI)) {
+	     *          return new Error(
+	     *            'Expected a string or an URI for ' + propName + ' in ' +
+	     *            componentName
+	     *          );
+	     *        }
+	     *      }
+	     *    },
+	     *    render: function() {...}
+	     *  });
+	     *
+	     * @internal
+	     */
+
+
+	    var ANONYMOUS = '<<anonymous>>'; // Important!
+	    // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+
+	    var ReactPropTypes = {
+	      array: createPrimitiveTypeChecker('array'),
+	      bigint: createPrimitiveTypeChecker('bigint'),
+	      bool: createPrimitiveTypeChecker('boolean'),
+	      func: createPrimitiveTypeChecker('function'),
+	      number: createPrimitiveTypeChecker('number'),
+	      object: createPrimitiveTypeChecker('object'),
+	      string: createPrimitiveTypeChecker('string'),
+	      symbol: createPrimitiveTypeChecker('symbol'),
+	      any: createAnyTypeChecker(),
+	      arrayOf: createArrayOfTypeChecker,
+	      element: createElementTypeChecker(),
+	      elementType: createElementTypeTypeChecker(),
+	      instanceOf: createInstanceTypeChecker,
+	      node: createNodeChecker(),
+	      objectOf: createObjectOfTypeChecker,
+	      oneOf: createEnumTypeChecker,
+	      oneOfType: createUnionTypeChecker,
+	      shape: createShapeTypeChecker,
+	      exact: createStrictShapeTypeChecker
+	    };
+	    /**
+	     * inlined Object.is polyfill to avoid requiring consumers ship their own
+	     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+	     */
+
+	    /*eslint-disable no-self-compare*/
+
+	    function is(x, y) {
+	      // SameValue algorithm
+	      if (x === y) {
+	        // Steps 1-5, 7-10
+	        // Steps 6.b-6.e: +0 != -0
+	        return x !== 0 || 1 / x === 1 / y;
+	      } else {
+	        // Step 6.a: NaN == NaN
+	        return x !== x && y !== y;
+	      }
+	    }
+	    /*eslint-enable no-self-compare*/
+
+	    /**
+	     * We use an Error-like object for backward compatibility as people may call
+	     * PropTypes directly and inspect their output. However, we don't use real
+	     * Errors anymore. We don't inspect their stack anyway, and creating them
+	     * is prohibitively expensive if they are created too often, such as what
+	     * happens in oneOfType() for any type before the one that matched.
+	     */
+
+
+	    function PropTypeError(message, data) {
+	      this.message = message;
+	      this.data = data && typeof data === 'object' ? data : {};
+	      this.stack = '';
+	    } // Make `instanceof Error` still work for returned errors.
+
+
+	    PropTypeError.prototype = Error.prototype;
+
+	    function createChainableTypeChecker(validate) {
+	      {
+	        var manualPropTypeCallCache = {};
+	        var manualPropTypeWarningCount = 0;
+	      }
+
+	      function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+	        componentName = componentName || ANONYMOUS;
+	        propFullName = propFullName || propName;
+
+	        if (secret !== ReactPropTypesSecret) {
+	          if (throwOnDirectAccess) {
+	            // New behavior only for users of `prop-types` package
+	            var err = new Error('Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use `PropTypes.checkPropTypes()` to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
+	            err.name = 'Invariant Violation';
+	            throw err;
+	          } else if (typeof console !== 'undefined') {
+	            // Old behavior for people using React.PropTypes
+	            var cacheKey = componentName + ':' + propName;
+
+	            if (!manualPropTypeCallCache[cacheKey] && // Avoid spamming the console because they are often not actionable except for lib authors
+	            manualPropTypeWarningCount < 3) {
+	              printWarning('You are manually calling a React.PropTypes validation ' + 'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' + 'and will throw in the standalone `prop-types` package. ' + 'You may be seeing this warning due to a third-party PropTypes ' + 'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.');
+	              manualPropTypeCallCache[cacheKey] = true;
+	              manualPropTypeWarningCount++;
+	            }
+	          }
+	        }
+
+	        if (props[propName] == null) {
+	          if (isRequired) {
+	            if (props[propName] === null) {
+	              return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+	            }
+
+	            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+	          }
+
+	          return null;
+	        } else {
+	          return validate(props, propName, componentName, location, propFullName);
+	        }
+	      }
+
+	      var chainedCheckType = checkType.bind(null, false);
+	      chainedCheckType.isRequired = checkType.bind(null, true);
+	      return chainedCheckType;
+	    }
+
+	    function createPrimitiveTypeChecker(expectedType) {
+	      function validate(props, propName, componentName, location, propFullName, secret) {
+	        var propValue = props[propName];
+	        var propType = getPropType(propValue);
+
+	        if (propType !== expectedType) {
+	          // `propValue` being instance of, say, date/regexp, pass the 'object'
+	          // check, but we can offer a more precise error message here rather than
+	          // 'of type `object`'.
+	          var preciseType = getPreciseType(propValue);
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'), {
+	            expectedType: expectedType
+	          });
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createAnyTypeChecker() {
+	      return createChainableTypeChecker(emptyFunctionThatReturnsNull);
+	    }
+
+	    function createArrayOfTypeChecker(typeChecker) {
+	      function validate(props, propName, componentName, location, propFullName) {
+	        if (typeof typeChecker !== 'function') {
+	          return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+	        }
+
+	        var propValue = props[propName];
+
+	        if (!Array.isArray(propValue)) {
+	          var propType = getPropType(propValue);
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+	        }
+
+	        for (var i = 0; i < propValue.length; i++) {
+	          var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret);
+
+	          if (error instanceof Error) {
+	            return error;
+	          }
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createElementTypeChecker() {
+	      function validate(props, propName, componentName, location, propFullName) {
+	        var propValue = props[propName];
+
+	        if (!isValidElement(propValue)) {
+	          var propType = getPropType(propValue);
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createElementTypeTypeChecker() {
+	      function validate(props, propName, componentName, location, propFullName) {
+	        var propValue = props[propName];
+
+	        if (!ReactIs.isValidElementType(propValue)) {
+	          var propType = getPropType(propValue);
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createInstanceTypeChecker(expectedClass) {
+	      function validate(props, propName, componentName, location, propFullName) {
+	        if (!(props[propName] instanceof expectedClass)) {
+	          var expectedClassName = expectedClass.name || ANONYMOUS;
+	          var actualClassName = getClassName(props[propName]);
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createEnumTypeChecker(expectedValues) {
+	      if (!Array.isArray(expectedValues)) {
+	        {
+	          if (arguments.length > 1) {
+	            printWarning('Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' + 'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).');
+	          } else {
+	            printWarning('Invalid argument supplied to oneOf, expected an array.');
+	          }
+	        }
+
+	        return emptyFunctionThatReturnsNull;
+	      }
+
+	      function validate(props, propName, componentName, location, propFullName) {
+	        var propValue = props[propName];
+
+	        for (var i = 0; i < expectedValues.length; i++) {
+	          if (is(propValue, expectedValues[i])) {
+	            return null;
+	          }
+	        }
+
+	        var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
+	          var type = getPreciseType(value);
+
+	          if (type === 'symbol') {
+	            return String(value);
+	          }
+
+	          return value;
+	        });
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createObjectOfTypeChecker(typeChecker) {
+	      function validate(props, propName, componentName, location, propFullName) {
+	        if (typeof typeChecker !== 'function') {
+	          return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+	        }
+
+	        var propValue = props[propName];
+	        var propType = getPropType(propValue);
+
+	        if (propType !== 'object') {
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+	        }
+
+	        for (var key in propValue) {
+	          if (has(propValue, key)) {
+	            var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+
+	            if (error instanceof Error) {
+	              return error;
+	            }
+	          }
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createUnionTypeChecker(arrayOfTypeCheckers) {
+	      if (!Array.isArray(arrayOfTypeCheckers)) {
+	        printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') ;
+	        return emptyFunctionThatReturnsNull;
+	      }
+
+	      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+	        var checker = arrayOfTypeCheckers[i];
+
+	        if (typeof checker !== 'function') {
+	          printWarning('Invalid argument supplied to oneOfType. Expected an array of check functions, but ' + 'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.');
+	          return emptyFunctionThatReturnsNull;
+	        }
+	      }
+
+	      function validate(props, propName, componentName, location, propFullName) {
+	        var expectedTypes = [];
+
+	        for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+	          var checker = arrayOfTypeCheckers[i];
+	          var checkerResult = checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret);
+
+	          if (checkerResult == null) {
+	            return null;
+	          }
+
+	          if (checkerResult.data && has(checkerResult.data, 'expectedType')) {
+	            expectedTypes.push(checkerResult.data.expectedType);
+	          }
+	        }
+
+	        var expectedTypesMessage = expectedTypes.length > 0 ? ', expected one of type [' + expectedTypes.join(', ') + ']' : '';
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`' + expectedTypesMessage + '.'));
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createNodeChecker() {
+	      function validate(props, propName, componentName, location, propFullName) {
+	        if (!isNode(props[propName])) {
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function invalidValidatorError(componentName, location, propFullName, key, type) {
+	      return new PropTypeError((componentName || 'React class') + ': ' + location + ' type `' + propFullName + '.' + key + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + type + '`.');
+	    }
+
+	    function createShapeTypeChecker(shapeTypes) {
+	      function validate(props, propName, componentName, location, propFullName) {
+	        var propValue = props[propName];
+	        var propType = getPropType(propValue);
+
+	        if (propType !== 'object') {
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+	        }
+
+	        for (var key in shapeTypes) {
+	          var checker = shapeTypes[key];
+
+	          if (typeof checker !== 'function') {
+	            return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
+	          }
+
+	          var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+
+	          if (error) {
+	            return error;
+	          }
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function createStrictShapeTypeChecker(shapeTypes) {
+	      function validate(props, propName, componentName, location, propFullName) {
+	        var propValue = props[propName];
+	        var propType = getPropType(propValue);
+
+	        if (propType !== 'object') {
+	          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+	        } // We need to check all keys in case some are required but missing from props.
+
+
+	        var allKeys = assign({}, props[propName], shapeTypes);
+
+	        for (var key in allKeys) {
+	          var checker = shapeTypes[key];
+
+	          if (has(shapeTypes, key) && typeof checker !== 'function') {
+	            return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
+	          }
+
+	          if (!checker) {
+	            return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' + '\nBad object: ' + JSON.stringify(props[propName], null, '  ') + '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  '));
+	          }
+
+	          var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+
+	          if (error) {
+	            return error;
+	          }
+	        }
+
+	        return null;
+	      }
+
+	      return createChainableTypeChecker(validate);
+	    }
+
+	    function isNode(propValue) {
+	      switch (typeof propValue) {
+	        case 'number':
+	        case 'string':
+	        case 'undefined':
+	          return true;
+
+	        case 'boolean':
+	          return !propValue;
+
+	        case 'object':
+	          if (Array.isArray(propValue)) {
+	            return propValue.every(isNode);
+	          }
+
+	          if (propValue === null || isValidElement(propValue)) {
+	            return true;
+	          }
+
+	          var iteratorFn = getIteratorFn(propValue);
+
+	          if (iteratorFn) {
+	            var iterator = iteratorFn.call(propValue);
+	            var step;
+
+	            if (iteratorFn !== propValue.entries) {
+	              while (!(step = iterator.next()).done) {
+	                if (!isNode(step.value)) {
+	                  return false;
+	                }
+	              }
+	            } else {
+	              // Iterator will provide entry [k,v] tuples rather than values.
+	              while (!(step = iterator.next()).done) {
+	                var entry = step.value;
+
+	                if (entry) {
+	                  if (!isNode(entry[1])) {
+	                    return false;
+	                  }
+	                }
+	              }
+	            }
+	          } else {
+	            return false;
+	          }
+
+	          return true;
+
+	        default:
+	          return false;
+	      }
+	    }
+
+	    function isSymbol(propType, propValue) {
+	      // Native Symbol.
+	      if (propType === 'symbol') {
+	        return true;
+	      } // falsy value can't be a Symbol
+
+
+	      if (!propValue) {
+	        return false;
+	      } // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+
+
+	      if (propValue['@@toStringTag'] === 'Symbol') {
+	        return true;
+	      } // Fallback for non-spec compliant Symbols which are polyfilled.
+
+
+	      if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+	        return true;
+	      }
+
+	      return false;
+	    } // Equivalent of `typeof` but with special handling for array and regexp.
+
+
+	    function getPropType(propValue) {
+	      var propType = typeof propValue;
+
+	      if (Array.isArray(propValue)) {
+	        return 'array';
+	      }
+
+	      if (propValue instanceof RegExp) {
+	        // Old webkits (at least until Android 4.0) return 'function' rather than
+	        // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+	        // passes PropTypes.object.
+	        return 'object';
+	      }
+
+	      if (isSymbol(propType, propValue)) {
+	        return 'symbol';
+	      }
+
+	      return propType;
+	    } // This handles more types than `getPropType`. Only used for error messages.
+	    // See `createPrimitiveTypeChecker`.
+
+
+	    function getPreciseType(propValue) {
+	      if (typeof propValue === 'undefined' || propValue === null) {
+	        return '' + propValue;
+	      }
+
+	      var propType = getPropType(propValue);
+
+	      if (propType === 'object') {
+	        if (propValue instanceof Date) {
+	          return 'date';
+	        } else if (propValue instanceof RegExp) {
+	          return 'regexp';
+	        }
+	      }
+
+	      return propType;
+	    } // Returns a string that is postfixed to a warning about an invalid type.
+	    // For example, "undefined" or "of type array"
+
+
+	    function getPostfixForTypeWarning(value) {
+	      var type = getPreciseType(value);
+
+	      switch (type) {
+	        case 'array':
+	        case 'object':
+	          return 'an ' + type;
+
+	        case 'boolean':
+	        case 'date':
+	        case 'regexp':
+	          return 'a ' + type;
+
+	        default:
+	          return type;
+	      }
+	    } // Returns class name of the object, if any.
+
+
+	    function getClassName(propValue) {
+	      if (!propValue.constructor || !propValue.constructor.name) {
+	        return ANONYMOUS;
+	      }
+
+	      return propValue.constructor.name;
+	    }
+
+	    ReactPropTypes.checkPropTypes = checkPropTypes;
+	    ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
+	    ReactPropTypes.PropTypes = ReactPropTypes;
+	    return ReactPropTypes;
+	  };
+
+	  return factoryWithTypeCheckers;
+	}
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+
+	{
+	  var ReactIs = requireReactIs(); // By explicitly using `prop-types` you are opting into new development behavior.
+	  // http://fb.me/prop-types-in-prod
+
+	  var throwOnDirectAccess = true;
+	  propTypes.exports = requireFactoryWithTypeCheckers()(ReactIs.isElement, throwOnDirectAccess);
+	}
+
+	const ServerContext = /*#__PURE__*/react.exports.createContext(null);
+
 	function GameStart(props) {
+	  const stateManager = useGlobalState();
+	  const server = react.exports.useContext(ServerContext);
 	  const {
 	    state,
 	    setRounds,
 	    setGameState,
-	    setTime
-	  } = props;
+	    setName,
+	    setTime,
+	    setRequestState,
+	    createSucceeded,
+	    resetState
+	  } = stateManager;
 	  const {
-	    rounds
+	    rounds,
+	    name
 	  } = state;
+	  const navigate = useNavigate();
 
 	  const handleClick = () => {
-	    setGameState("play");
+	    setRequestState({
+	      inFlight: true,
+	      error: "flyer"
+	    });
+	    server.createGame("mathemagician", state.rounds).then(response => {
+	      setRequestState({
+	        inFlight: false,
+	        error: null
+	      });
+	      createSucceeded(response);
+	      navigate(`/games/${response.id}`);
+	      setGameState("play");
+	    }).catch(error => {
+	      setRequestState({
+	        inFlight: false,
+	        error: error.message
+	      });
+	    });
 	    setTime(Date.now());
 	  };
 
-	  const handleChange = e => {
+	  const handleInputChange = e => {
 	    setRounds(Number.parseInt(e.target.value));
+	  };
+
+	  const handleNameChange = e => {
+	    setName(e.target.value);
 	  };
 
 	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
 	    className: "display",
-	    children: [/*#__PURE__*/jsxRuntime.exports.jsx("p", {
-	      children: "Hi, this is James' math game, choose your parameters and get to calculating!"
+	    children: [/*#__PURE__*/jsxRuntime.exports.jsx("label", {
+	      for: "nameInput",
+	      children: "Name: "
 	    }), /*#__PURE__*/jsxRuntime.exports.jsx("input", {
+	      type: "text",
+	      id: "nameInput",
+	      value: name,
+	      onChange: handleNameChange
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx("label", {
+	      for: "roundsInput",
+	      children: "Rounds:"
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx("input", {
+	      id: "roundsInput",
 	      type: "number",
 	      min: "1",
 	      max: "20",
 	      value: rounds,
-	      onChange: handleChange,
+	      onChange: handleInputChange,
 	      autoFocus: true
 	    }), /*#__PURE__*/jsxRuntime.exports.jsx("div", {
 	      children: /*#__PURE__*/jsxRuntime.exports.jsx("button", {
@@ -10768,240 +12816,169 @@
 	  }
 	};
 
+	const websocketConf = {
+	  port: 8081,
+	  host: "localhost"
+	}; // Helper function to create a standard query string from a parameter object
+	// Note that URLSearchParams is not supported in older browsers and may need to
+	// be polyfilled
+	// https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+
+	const objectToQueryString = obj => {
+	  const params = new URLSearchParams();
+	  Object.getOwnPropertyNames(obj).forEach(propName => {
+	    params.append(propName, obj[propName]);
+	  });
+	  return params.toString();
+	};
 	/**
-	 * Same as React's useReducer, but also executes middleware functions on every
-	 * action dispatch.
+	 * Thin wrapper around the native WebSocket object which deals with opening the
+	 * connection and parsing incoming messages.
 	 *
-	 * A middleware is a powerful and flexible function that can
-	 * - dispatch arbitrary actions, e.g. at an interval
-	 * - inspect all the dispatched actions
-	 * - change an action before it reaches the reducer or next middleware
-	 * - stop an action from propagating altogether
+	 * @param {object} parameters Parameters for the connection
+	 * @param {function} onOpen Called when the connection opens
+	 * @param {function} onClose Called when the connection closes
+	 * @param {function} onMessage Called with a parsed message whenever a message is received
 	 *
-	 * The middleware interface is designed to be exactly the same as Redux's
-	 * middlewares - the middleware function must have the following form:
-	 ```js
-	  ({getState}) => {
-	    return (next) =>
-	      return (action) => {
-	        next(action);
-	      }
-	    }
-	  }
-	 ```
-	 * A middleware function must call `next(action)` to propagate the action to
-	 * the final action dispatch and reducer, otherwise the action will be ignored.
-	 *
-	 * Middlewares are executed in reverse order.
-	 *
-	 * @param {Array<Function>} middlewares Middleware functions, executed in reverse order
-	 * @param {Function} reducer Passed to React's useReducer
-	 * @param {any} initOrInitialValue Passed to React's useReducer
-	 * @param {any} init Passed to React's useReducer
-	 * @return {Array} of [state, dispatch]
+	 * @return {object} Object with
+	 *   function `close` that closes the websocket connection
 	 */
 
-	const useReducerWithMiddleware = (middlewares, reducer, initOrInitialValue, init) => {
-	  /*
-	   * In order to give access to last state to middleware functions, need to
-	   * provide them a value which itself doesn't change to avoid constantly
-	   * re-defining the middlewares. `useRef` provides just the "box" which we can
-	   * mutate for this purpose.
-	   */
-	  const lastStateRef = react.exports.useRef(); // `useMemo` will be discussed in next lecture
 
-	  const refUpdatingReducer = react.exports.useMemo(() => (prevState, action) => {
-	    const newState = reducer(prevState, action);
-	    lastStateRef.current = newState;
-	    return newState;
-	  }, [lastStateRef]);
-	  const [state, dispatch] = react.exports.useReducer(refUpdatingReducer, initOrInitialValue, init);
-	  const dispatchWithMiddlewares = react.exports.useMemo(() => {
-	    const middlewareInit = {
-	      getStateBefore: () => lastStateRef.current
-	    };
-	    return middlewares.concat(dispatch).reverse().reduce((acc, middleware) => {
-	      /*
-	       * Initialize the middleware with means to get state and the next
-	       * middleware/final dispatch.
-	       */
-	      return middleware(middlewareInit)(acc);
-	    });
-	  }, [middlewares, dispatch, lastStateRef]);
-	  return [state, dispatchWithMiddlewares];
-	};
-
-	const LoggingMiddleware = _ref => {
+	const connect = _ref => {
 	  let {
-	    getStateBefore
+	    onOpen,
+	    onClose,
+	    onMessage,
+	    parameters = {}
 	  } = _ref;
-	  // Initialization code if any goes here
-	  let time;
-	  return next => {
-	    return action => {
-	      const stateBefore = getStateBefore();
+	  // `ws` signifies the websocket protocol
+	  // `wss` would be secure websocket protocol (like https)
+	  const websocketConnection = new WebSocket(`ws://${websocketConf.host}:${websocketConf.port}/?${objectToQueryString(parameters)}`);
 
-	      if (!stateBefore) {
-	        localStorage.setItem('time', Date.now());
-	      } else if (action.type === "toggleRequest" && !stateBefore.requestState.inFlight) {
-	        localStorage.setItem('time', Date.now());
-	      } else if (action.type === "toggleRequest" && stateBefore.requestState.inFlight) {
-	        time = localStorage.getItem("time");
-	        console.log(Date.now() - time);
-	      } // eslint-disable-next-line no-console
+	  websocketConnection.onopen = () => onOpen();
+
+	  websocketConnection.onclose = event => {
+	    // WebSocket might be disconnected by a server with a specific reason
+	    const reason = event.reason;
+	    onClose({
+	      reason
+	    });
+	  };
+
+	  websocketConnection.onmessage = messageEvent => {
+	    // In this example `data` is JSON encoded in an UTF-8 String
+	    const payload = messageEvent.data;
+	    let parsedMessage;
+
+	    try {
+	      parsedMessage = JSON.parse(payload);
+	    } catch (error) {
+	      console.error("error parsing websocket message", error, payload); // eslint-disable-line no-console
+
+	      return;
+	    }
+
+	    onMessage(parsedMessage);
+	  };
+	  /*
+	   * Although the WebSocket object has a `send` method, it is important to very
+	   * carefully consider using it when there is an HTTP API present as well.
+	   * It is generally a very bad idea to use different transports -
+	   * websocket.send and HTTP requests - to implement application logic as it
+	   * leads to a wide array of race conditions.
+	   *
+	   * Usually only "protocol" type messages should be sent via the WebSocket connection.
+	   */
 
 
-	      console.log("Dispatching action", action, "while state is", stateBefore);
-	      /*
-	       * Delegate to the next middleware or finally - the action dispatch
-	       */
+	  const close = () => {
+	    websocketConnection.close();
+	  };
 
-	      next(action);
-	      /*
-	       *
-	       * One crucial different to Redux's middlewares is that as React can
-	       * delay calling the reducer for internal optimizations, calling
-	       * `next(action)` does not immediately call the reducer and thus there is
-	       * no way to get "post-action" state in the middleware function.
-	       */
-	    };
+	  return {
+	    close
 	  };
 	};
-
-	const toggleRequest = requestState => ({
-	  type: "toggleRequest",
-	  payload: requestState
-	});
-	const createPostSucceeded = gameObject => ({
-	  type: "createPostSucceeded",
-	  payload: gameObject
-	});
-	const answerPostSucceeded = gameObject => ({
-	  type: "answerPostSucceeded",
-	  payload: gameObject
-	});
-	const initializer$1 = () => ({
-	  id: null,
-	  sign: null,
-	  firstNum: null,
-	  secondNum: null,
-	  skipUse: 0,
-	  CAL: 0,
-	  requestState: {
-	    inFlight: false,
-	    error: null
-	  }
-	});
-
-	const setRequestState = (state, requestState) => {
-	  // console.log("James the flyer");
-	  return { ...state,
-	    requestState: requestState
-	  };
-	};
-
-	const createGame$1 = (state, gameObject) => ({ ...state,
-	  id: gameObject.id,
-	  sign: gameObject.nextExpression.operator,
-	  firstNum: gameObject.nextExpression.lhs,
-	  secondNum: gameObject.nextExpression.rhs,
-	  skipUse: gameObject.skipsRemaining,
-	  CAL: gameObject.nextExpression.correctAnswerLength
-	});
-
-	const answerGame$1 = (state, gameObject) => ({ ...state,
-	  firstNum: gameObject.game.nextExpression.lhs,
-	  secondNum: gameObject.game.nextExpression.rhs,
-	  sign: gameObject.game.nextExpression.operator,
-	  skipUse: gameObject.game.skipsRemaining,
-	  CAL: gameObject.game.nextExpression.correctAnswerLength
-	});
-
-	const setSign = (state, newSign) => ({ ...state,
-	  sign: newSign
-	});
-
-	const setFirstNum = (state, newFirstNum) => ({ ...state,
-	  firstNum: newFirstNum
-	});
-
-	const setSecondNum = (state, newSecondNum) => ({ ...state,
-	  secondNum: newSecondNum
-	});
-
-	const setSkipuse = (state, newSkipuse) => ({ ...state,
-	  skipUse: newSkipuse
-	});
-
-	const reducer$1 = (state, action) => {
-	  switch (action.type) {
-	    case "changeSign":
-	      return setSign(state, action.payload);
-
-	    case "changeFirstNum":
-	      return setFirstNum(state, action.payload);
-
-	    case "changeSecondNum":
-	      return setSecondNum(state, action.payload);
-
-	    case "changeSkipUse":
-	      return setSkipuse(state, action.payload);
-
-	    case "createPostSucceeded":
-	      return createGame$1(state, action.payload);
-
-	    case "toggleRequest":
-	      return setRequestState(state, action.payload);
-
-	    case "answerPostSucceeded":
-	      return answerGame$1(state, action.payload);
-
-	    default:
-	      throw new Error("Invalid gameplay reducer usage");
-	  }
-	};
-
-	const ServerContext = /*#__PURE__*/react.exports.createContext(null);
 
 	function Gameplay(props) {
+	  // const { state, setCount, setGameState, setMemory, setStorage, clearMemory } = props;
+	  useParams();
+	  const server = react.exports.useContext(ServerContext);
+	  const navigate = useNavigate();
+	  const stateManager = useGlobalState();
 	  const {
+	    setRequestState,
+	    createSucceeded,
+	    answerSucceeded,
+	    onOpen,
+	    onConnecting,
+	    updateState,
+	    getTimeSpent,
+	    onMessage,
+	    onClose,
 	    state,
-	    setCount,
 	    setGameState,
-	    setMemory
-	  } = props;
-	  const {
-	    rounds
-	  } = state;
-	  const server = react.exports.useContext(ServerContext); // const [subState, dispatchSub] = useReducer(reducer, undefined, initializer);
-
-	  const [subState, dispatchSub] = useReducerWithMiddleware([LoggingMiddleware], reducer$1, undefined, initializer$1);
-
-	  const setRequestState = requestState => dispatchSub(toggleRequest(requestState));
-
-	  const createSucceeded = gameObject => dispatchSub(createPostSucceeded(gameObject));
-
-	  const answerSucceeded = gameObject => dispatchSub(answerPostSucceeded(gameObject));
+	    resetState,
+	    setMemory,
+	    clearStorage,
+	    clearMemory,
+	    deleteFromOngoing
+	  } = stateManager; // if (props.firstRender) {
+	  //     if (!state.requestState.inFlight) {
+	  //         setRequestState({inFlight: true, error: "flyer"});
+	  //         server.createGame("mathemagician", rounds).then(
+	  //             (response) => {
+	  //                 createSucceeded(response);
+	  //                 setRequestState({inFlight: false, error: null});
+	  //             }
+	  //         ).catch( 
+	  //             (error) => {
+	  //                 setRequestState({inFlight: false, error: error.message});
+	  //             }
+	  //         );
+	  //     }
+	  // }
+	  // useEffect(() => { 
+	  //     if (!state.requestState.inFlight) {
+	  //         setRequestState({inFlight: true, error: "flyer"});
+	  //         server.createGame("mathemagician", state.rounds).then(
+	  //             (response) => {
+	  //                 createSucceeded(response);
+	  //                 setRequestState({inFlight: false, error: null});
+	  //             }
+	  //         ).catch( 
+	  //             (error) => {
+	  //                 setRequestState({inFlight: false, error: error.message});
+	  //             }
+	  //         );
+	  //     }
+	  // }, []);
+	  // setTimeout(createSucceeded(props.ongoing[params.gameId]), 10000);
+	  // console.log(props.ongoing[params.gameId]);
+	  // useEffect(() => {
+	  //     if (state.id && state.playerId) {
+	  //         props.setOngoing(() => ({
+	  //             ...props.ongoing,
+	  //             [state.id]: state
+	  //         }));
+	  //     }
+	  //     return () => resetState();
+	  // }, []);
 
 	  react.exports.useEffect(() => {
-	    if (!subState.requestState.inFlight) {
-	      setRequestState({
-	        inFlight: true,
-	        error: "flyer"
-	      });
-	      server.createGame("mathemagician", rounds).then(response => {
-	        createSucceeded(response);
-	        setRequestState({
-	          inFlight: false,
-	          error: null
-	        });
-	      }).catch(error => {
-	        setRequestState({
-	          inFlight: false,
-	          error: error.message
-	        });
-	      });
-	    }
+	    const websocketconnection = (props.connectWebSocket || connect)({
+	      onOpen,
+	      onClose,
+	      onMessage,
+	      parameters: {
+	        playerName: state.name
+	      }
+	    });
+	    onConnecting(websocketconnection); // updateState(params.gameId);
+	    // console.log(params.gameId.substring(1));
+
+	    return () => websocketconnection.close();
 	  }, []);
 
 	  const handleSubmit = e => {
@@ -11013,7 +12990,7 @@
 	      inFlight: true,
 	      error: null
 	    });
-	    server.answerGame(subState.id, "skip").then(response => {
+	    server.answerGame(state.id, "skip").then(response => {
 	      answerSucceeded(response);
 	      setRequestState({
 	        inFlight: false,
@@ -11028,46 +13005,42 @@
 	  };
 
 	  const handleInputChange = e => {
-	    if (!subState.requestState.inFlight) {
-	      evaluate(subState.firstNum, subState.secondNum, subState.sign);
+	    if (!state.requestState.inFlight) {
+	      evaluate(state.firstNum, state.secondNum, state.sign);
 	      const input = Number.parseInt(e.target.value);
 
-	      if (subState.CAL === input.toString().length) {
-	        // setMemory({
-	        //     firstNum: subState.firstNum,
-	        //     secondNum: subState.secondNum,
-	        //     answer: answer,
-	        //     sign: subState.sign,
-	        //     value: input,
-	        //     time: Date.now()-time,
-	        //     speed: Math.floor((Date.now()-time)/1000) < 3
-	        // });
+	      if (state.CAL === input.toString().length) {
 	        e.target.value = "";
 	        setRequestState({
 	          inFlight: true,
 	          error: null
 	        });
-	        server.answerGame(subState.id, input).then(response => {
+	        server.answerGame(state.id, input).then(response => {
 	          setMemory({
-	            firstNum: subState.firstNum,
-	            secondNum: subState.secondNum,
+	            firstNum: state.firstNum,
+	            secondNum: state.secondNum,
 	            answer: response.move.correct,
-	            sign: subState.sign,
+	            sign: state.sign,
 	            value: input,
 	            time: response.move.timeSpentMillis,
 	            speed: Math.floor(response.move.timeSpentMillis / 1000) < 3
 	          });
 
 	          if (response.game.nextExpression === null) {
+	            setRequestState({
+	              inFlight: false,
+	              error: null
+	            });
 	            setGameState("end");
+	            getTimeSpent();
 	            return;
 	          }
 
-	          answerSucceeded(response);
 	          setRequestState({
 	            inFlight: false,
 	            error: null
 	          });
+	          answerSucceeded(response);
 	        }).catch(error => {
 	          setRequestState({
 	            inFlight: false,
@@ -11078,15 +13051,41 @@
 	    }
 	  };
 
+	  const handleDisconnect = async () => {
+	    clearStorage();
+	    clearMemory();
+	    resetState();
+	    state.webSocketConnection.close();
+	    navigate(`/createGame`);
+	    deleteFromOngoing(state.id);
+	  };
+
 	  return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
 	    className: "display",
-	    children: subState.error != null ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
+	    children: state.error != null ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
 	      children: " ERROR!!"
-	    }) : subState.requestState.inFlight ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
+	    }) : state.requestState.inFlight ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
 	      children: "Loading..."
 	    }) : /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
-	      children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
-	        children: [subState.firstNum, " ", subState.sign, " ", subState.secondNum]
+	      children: [!state.connectionError ? /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	        onClick: handleDisconnect,
+	        children: state.connecting ? /*#__PURE__*/jsxRuntime.exports.jsx("span", {
+	          children: "connecting..."
+	        }) : /*#__PURE__*/jsxRuntime.exports.jsx("span", {
+	          children: "disconnect"
+	        })
+	      }) : state.connectionError.reason === 'player-name-taken' ? /*#__PURE__*/jsxRuntime.exports.jsx("span", {
+	        children: "Player Name Taken"
+	      }) : null, state.data.map(key => {
+	        return /*#__PURE__*/jsxRuntime.exports.jsxs("p", {
+	          children: [/*#__PURE__*/jsxRuntime.exports.jsx("span", {
+	            children: key.name
+	          }), key.id === state.playerId ? /*#__PURE__*/jsxRuntime.exports.jsx("span", {
+	            children: "(you)"
+	          }) : null]
+	        });
+	      }), /*#__PURE__*/jsxRuntime.exports.jsxs("p", {
+	        children: [state.firstNum, " ", state.sign, " ", state.secondNum]
 	      }), /*#__PURE__*/jsxRuntime.exports.jsx("form", {
 	        onSubmit: handleSubmit,
 	        children: /*#__PURE__*/jsxRuntime.exports.jsx("input", {
@@ -11094,20 +13093,19 @@
 	          onChange: handleInputChange,
 	          autoFocus: true
 	        })
-	      }), subState.skipUse > 0 ? /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	      }), state.skipUse > 0 ? /*#__PURE__*/jsxRuntime.exports.jsx("button", {
 	        onClick: skip,
 	        children: "Skip"
 	      }) : null]
 	    })
 	  });
-	}
-	Gameplay.propTypes = {
-	  state: propTypes.exports.PropTypes.object.isRequired,
-	  setCount: propTypes.exports.PropTypes.func.isRequired,
-	  setGameState: propTypes.exports.PropTypes.func.isRequired,
-	  setStorage: propTypes.exports.PropTypes.func.isRequired,
-	  setMemory: propTypes.exports.PropTypes.func.isRequired
-	};
+	} // Gameplay.propTypes = {
+	//     state: PropTypes.object.isRequired,
+	//     setCount: PropTypes.func.isRequired,
+	//     setGameState: PropTypes.func.isRequired,
+	//     setStorage: PropTypes.func.isRequired,
+	//     setMemory: PropTypes.func.isRequired
+	// };
 
 	var reactIsExports = requireReactIs();
 
@@ -12667,6 +14665,7 @@
 	};
 
 	function Gameover(props) {
+	  const stateManager = useGlobalState();
 	  const {
 	    setRounds,
 	    setTime,
@@ -12674,56 +14673,28 @@
 	    setCount,
 	    clearMemory,
 	    setStorage,
-	    state
-	  } = props;
+	    state,
+	    getTimeSpent
+	  } = stateManager;
 	  const {
 	    time,
-	    count,
 	    memory,
-	    storage
+	    storage,
+	    rounds,
+	    name
 	  } = state;
-	  const timeSpent = Date.now() - time;
-	  let inputVal = count;
-	  const keyArray = Object.keys(storage);
 	  react.exports.useEffect(() => {
 	    setStorage(memory);
 	  }, [memory]);
 
-	  const handleClick = e => {
-	    setCount(1);
-	    setRounds(Number.parseInt(inputVal));
-	    setTime(Date.now());
-	    setGameState("play");
-	    clearMemory();
-	  };
-
-	  const handleInputChange = e => {
-	    inputVal = e.target.value;
-	  };
-
 	  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
 	    className: "display",
 	    children: [/*#__PURE__*/jsxRuntime.exports.jsxs("p", {
-	      children: ["You spent ", timeSpent, " milliseconds playing "]
-	    }), /*#__PURE__*/jsxRuntime.exports.jsx("input", {
-	      type: "number",
-	      defaultValue: count,
-	      id: "roundChanger",
-	      min: "1",
-	      max: "20",
-	      onChange: handleInputChange,
-	      autoFocus: true
-	    }), /*#__PURE__*/jsxRuntime.exports.jsx("button", {
-	      onClick: handleClick,
-	      autoFocus: true,
-	      children: "Play again?"
-	    }), keyArray.map(key => {
-	      return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
-	        children: [/*#__PURE__*/jsxRuntime.exports.jsx("p", {
-	          children: key
-	        }), storage[key].map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
-	        }))]
-	      });
+	      children: [name, " spent ", state.ongoing[state.id].timeSpent, " milliseconds playing "]
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx("aside", {
+	      className: "historyDisplay",
+	      children: state.memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
+	      }))
 	    })]
 	  });
 	}
@@ -12734,107 +14705,6 @@
 	  setStorage: propTypes.exports.PropTypes.func.isRequired,
 	  clearMemory: propTypes.exports.PropTypes.func.isRequired,
 	  setTime: propTypes.exports.PropTypes.func.isRequired
-	};
-
-	let count = 0;
-	const changeRounds = newRounds => ({
-	  type: "changeRounds",
-	  payload: newRounds
-	});
-	const changeCount = newCount => ({
-	  type: "changeCount",
-	  payload: newCount
-	});
-	const changeGameState = newGameState => ({
-	  type: "changeGameState",
-	  payload: newGameState
-	});
-	const startTime = () => ({
-	  type: "startTime"
-	});
-	const changeMemory = memoryObject => ({
-	  type: "changeMemory",
-	  payload: memoryObject
-	});
-	const changeStorage = newArray => ({
-	  type: "changeStorage",
-	  payload: newArray
-	});
-	const resetMemory = () => ({
-	  type: "resetMemory"
-	});
-	const initializer = () => ({
-	  rounds: 3,
-	  count: 1,
-	  gameState: "start",
-	  time: null,
-	  memory: [],
-	  storage: {}
-	});
-
-	const setRounds = (state, newRounds) => ({ ...state,
-	  rounds: newRounds
-	});
-
-	const setCount = (state, newCount) => {
-	  return { ...state,
-	    count: newCount
-	  };
-	};
-
-	const setGameState = (state, newGameState) => ({ ...state,
-	  gameState: newGameState
-	});
-
-	const setTime = state => ({ ...state,
-	  time: Date.now()
-	});
-
-	const updateMemory = (state, memoryObject) => ({ ...state,
-	  memory: state.memory.concat([{ ...memoryObject
-	  }])
-	});
-
-	const clearMemory = state => ({ ...state,
-	  memory: []
-	});
-
-	const updateStorage = (state, newArray) => {
-	  count++;
-	  const key = `game${count}`;
-	  return { ...state,
-	    storage: { ...state.storage,
-	      [key]: newArray
-	    }
-	  };
-	};
-
-	const reducer = (state, action) => {
-	  switch (action.type) {
-	    case "changeRounds":
-	      return setRounds(state, action.payload);
-
-	    case "changeCount":
-	      return setCount(state, action.payload);
-
-	    case "changeGameState":
-	      return setGameState(state, action.payload);
-
-	    case "startTime":
-	      return setTime(state);
-
-	    case "changeMemory":
-	      return updateMemory(state, action.payload);
-
-	    case "changeStorage":
-	      return updateStorage(state, action.payload);
-
-	    case "resetMemory":
-	      return clearMemory(state);
-
-	    default:
-	      throw new Error("Invalid App reducer Usage");
-	  }
 	};
 
 	const SERVER_ADDRESS = "http://localhost:8081";
@@ -12879,60 +14749,173 @@
 	  };
 	};
 
-	function App(props) {
-	  const [state, dispatch] = react.exports.useReducer(reducer, undefined, initializer);
+	const Navbar = props => {
+	  const stateManager = useGlobalState();
+	  return /*#__PURE__*/jsxRuntime.exports.jsxs("navbar", {
+	    children: [/*#__PURE__*/jsxRuntime.exports.jsx(Link, {
+	      to: "/",
+	      children: /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	        onClick: () => stateManager.resetState(),
+	        children: "Home"
+	      })
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx(Link, {
+	      to: "/createGame",
+	      children: /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	        onClick: () => stateManager.resetState(),
+	        children: "Create Game"
+	      })
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx(Link, {
+	      to: "/players",
+	      children: /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	        onClick: () => stateManager.resetState(),
+	        children: "Players"
+	      })
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx(Link, {
+	      to: "/ongoingGames",
+	      children: /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	        onClick: () => stateManager.resetState(),
+	        children: "Ongoing Games"
+	      })
+	    }), /*#__PURE__*/jsxRuntime.exports.jsx(Link, {
+	      to: "/finishedGames",
+	      children: /*#__PURE__*/jsxRuntime.exports.jsx("button", {
+	        onClick: () => stateManager.resetState(),
+	        children: "Finished Games"
+	      })
+	    })]
+	  });
+	};
+
+	const OngoingGames = props => {
+	  const stateManager = useGlobalState();
+	  const {
+	    state,
+	    updateState
+	  } = stateManager;
+	  const keyArray = Object.keys(state.ongoing);
+	  return /*#__PURE__*/jsxRuntime.exports.jsx("section", {
+	    className: "display",
+	    children: keyArray.map(key => {
+	      if (key != "null") {
+	        return state.ongoing[key].gameState != "end" ? /*#__PURE__*/jsxRuntime.exports.jsx(Link, {
+	          to: `/games/${key}`,
+	          children: /*#__PURE__*/jsxRuntime.exports.jsxs("button", {
+	            onClick: () => updateState(key),
+	            children: ["Game ", key]
+	          })
+	        }) : null;
+	      }
+	    })
+	  });
+	};
+
+	const FinishedGames = props => {
+	  const stateManager = useGlobalState();
+	  const {
+	    state,
+	    updateState
+	  } = stateManager;
+	  const keyArray = Object.keys(state.ongoing);
+	  return /*#__PURE__*/jsxRuntime.exports.jsx("section", {
+	    className: "display",
+	    children: keyArray.map(key => {
+	      return state.ongoing[key].gameState === "end" ? /*#__PURE__*/jsxRuntime.exports.jsx(Link, {
+	        to: `/games/${key}`,
+	        children: /*#__PURE__*/jsxRuntime.exports.jsxs("button", {
+	          onClick: () => updateState(key),
+	          children: ["Game ", key]
+	        })
+	      }) : null;
+	    })
+	  });
+	};
+
+	const Game = props => {
+	  const stateManager = useGlobalState();
 	  const game = {
 	    start: "start",
 	    play: "play",
 	    end: "end"
 	  };
+	  const {
+	    state
+	  } = stateManager;
+	  return /*#__PURE__*/jsxRuntime.exports.jsxs("section", {
+	    children: [state.gameState === game.play && /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
+	      children: [/*#__PURE__*/jsxRuntime.exports.jsx(Gameplay, {
+	        connectWebSocket: props.connectWebSocket
+	      }), /*#__PURE__*/jsxRuntime.exports.jsx("aside", {
+	        className: "historyDisplay",
+	        children: state.memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
+	        }))
+	      })]
+	    }), state.gameState === game.end && /*#__PURE__*/jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, {
+	      children: /*#__PURE__*/jsxRuntime.exports.jsx(Gameover, {})
+	    })]
+	  });
+	};
 
-	  const setRounds = rounds => dispatch(changeRounds(rounds));
+	const Players = props => {
+	  const stateManager = useGlobalState();
+	  const {
+	    state,
+	    updateState
+	  } = stateManager;
+	  const keyArray = Object.keys(state.ongoing);
+	  return /*#__PURE__*/jsxRuntime.exports.jsx("section", {
+	    className: "display",
+	    children: keyArray.map(key => {
+	      if (key != "null") {
+	        return state.ongoing[key].gameState != "end" ? /*#__PURE__*/jsxRuntime.exports.jsx("p", {
+	          children: state.ongoing[key].name
+	        }) : null;
+	      }
+	    })
+	  });
+	};
 
-	  const setGameState = gameState => dispatch(changeGameState(gameState));
-
-	  const setTime = () => dispatch(startTime());
-
-	  const setCount = newCount => dispatch(changeCount(newCount));
-
-	  const setMemory = memoryObject => dispatch(changeMemory(memoryObject));
-
-	  const clearMemory = () => dispatch(resetMemory());
-
-	  const setStorage = memory => dispatch(changeStorage(memory));
-
+	function StateApp(props) {
 	  return /*#__PURE__*/jsxRuntime.exports.jsx(ServerContext.Provider, {
 	    value: createServer(),
 	    children: /*#__PURE__*/jsxRuntime.exports.jsxs("main", {
-	      children: [state.gameState === game.start && /*#__PURE__*/jsxRuntime.exports.jsx(GameStart, {
-	        state: state,
-	        setRounds: setRounds,
-	        setGameState: setGameState,
-	        setTime: setTime
-	      }), state.gameState === game.play && /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
-	        children: [/*#__PURE__*/jsxRuntime.exports.jsx(Gameplay, {
-	          state: state,
-	          setCount: setCount,
-	          setGameState: setGameState,
-	          setMemory: setMemory,
-	          setStorage: setStorage
-	        }), /*#__PURE__*/jsxRuntime.exports.jsx("aside", {
-	          className: "historyDisplay",
-	          children: state.memory.map(item => /*#__PURE__*/jsxRuntime.exports.jsx(History, { ...item
-	          }))
+	      children: [/*#__PURE__*/jsxRuntime.exports.jsx(Navbar, {}), /*#__PURE__*/jsxRuntime.exports.jsxs(Routes, {
+	        children: [/*#__PURE__*/jsxRuntime.exports.jsx(Route, {
+	          path: "/",
+	          element: /*#__PURE__*/jsxRuntime.exports.jsx(Welcome, {})
+	        }), /*#__PURE__*/jsxRuntime.exports.jsx(Route, {
+	          path: "/createGame",
+	          element: /*#__PURE__*/jsxRuntime.exports.jsx(GameStart, {})
+	        }), /*#__PURE__*/jsxRuntime.exports.jsx(Route, {
+	          path: "*",
+	          element: /*#__PURE__*/jsxRuntime.exports.jsx("main", {
+	            className: "display",
+	            children: /*#__PURE__*/jsxRuntime.exports.jsx("p", {
+	              children: "There's nothing here!"
+	            })
+	          })
+	        }), /*#__PURE__*/jsxRuntime.exports.jsx(Route, {
+	          path: "/ongoingGames",
+	          element: /*#__PURE__*/jsxRuntime.exports.jsx(OngoingGames, {})
+	        }), /*#__PURE__*/jsxRuntime.exports.jsx(Route, {
+	          path: "/finishedGames",
+	          element: /*#__PURE__*/jsxRuntime.exports.jsx(FinishedGames, {})
+	        }), /*#__PURE__*/jsxRuntime.exports.jsx(Route, {
+	          path: "/players",
+	          element: /*#__PURE__*/jsxRuntime.exports.jsx(Players, {})
+	        }), /*#__PURE__*/jsxRuntime.exports.jsx(Route, {
+	          path: "/games/:gameId",
+	          element: /*#__PURE__*/jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, {
+	            children: /*#__PURE__*/jsxRuntime.exports.jsx(Game, {})
+	          })
 	        })]
-	      }), state.gameState === game.end && /*#__PURE__*/jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, {
-	        children: /*#__PURE__*/jsxRuntime.exports.jsx(Gameover, {
-	          setRounds: setRounds,
-	          setTime: setTime,
-	          setGameState: setGameState,
-	          setCount: setCount,
-	          clearMemory: clearMemory,
-	          setStorage: setStorage,
-	          state: state
-	        })
 	      })]
 	    })
+	  });
+	}
+
+	function App(props) {
+	  return /*#__PURE__*/jsxRuntime.exports.jsx(StateProvider, {
+	    children: /*#__PURE__*/jsxRuntime.exports.jsx(StateApp, {})
 	  });
 	}
 
@@ -12969,7 +14952,9 @@
 	styleInject(css_248z);
 
 	const root = ReactDOM.createRoot(document.getElementById("root"));
-	root.render( /*#__PURE__*/jsxRuntime.exports.jsx(App, {}));
+	root.render( /*#__PURE__*/jsxRuntime.exports.jsx(BrowserRouter, {
+	  children: /*#__PURE__*/jsxRuntime.exports.jsx(App, {})
+	}));
 
 })();
 //# sourceMappingURL=app.js.map

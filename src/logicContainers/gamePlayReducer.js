@@ -33,8 +33,28 @@ export const changeSkipUse = (newSkipuse) => ({
     payload: newSkipuse
 });
 
+export const onOpen = () => ({
+    type: "CONNECTED",
+    payload: null
+});
+
+export const onConnecting = (websocketConnection) => ({
+    type: "CONNECTING",
+    payload: websocketConnection
+});
+
+export const onMessage = (parsedMessage) => ({
+    type: "MESSAGE_RECEIVED",
+    payload: parsedMessage
+});
+// note that reason is an object of format {reason: string}
+export const onClose = (reason) => ({
+    type: "DISCONNECTED",
+    payload: reason
+});
+
 export const initializer = () => ({
-    id: null,
+    playerId: null,
     sign: null,
     firstNum: null,
     secondNum: null,
@@ -43,7 +63,12 @@ export const initializer = () => ({
     requestState: {
         inFlight: false,
         error: null
-    }
+    },
+    connecting: false,
+    connected: false,
+    connectionError: null,
+    webSocketConnection: null,
+    data: []
 });
 
 const setRequestState = (state, requestState) => {
@@ -69,6 +94,21 @@ const answerGame = (state, gameObject) => ({
     skipUse: gameObject.game.skipsRemaining,
     CAL: gameObject.game.nextExpression.correctAnswerLength
 });
+
+const messageReceived = (state, parsedMessage) => {
+    // parsed message is an object of the format {eventName: String, payload: Object}
+    if (parsedMessage.eventName === 'online-players') {
+        return {
+            ...state,
+            data: parsedMessage.payload
+        };
+    } else {
+        return {
+            ...state,
+            playerId: parsedMessage.payload.playerId
+        };
+    }
+};
 
 const setSign = (state, newSign) => ({
     ...state,
@@ -106,6 +146,14 @@ export const reducer = (state, action) => {
             return setRequestState(state, action.payload);
         case "answerPostSucceeded":
             return answerGame(state, action.payload);
+        case "CONNECTED":
+            return {...state, connected: true, connecting: false, connectionError: null};
+        case "CONNECTING":
+            return {...state, connected: false, connecting: true, webSocketConnection: action.payload, connectionError: null};
+        case "MESSAGE_RECEIVED":
+            return messageReceived(state, action.payload); 
+        case "DISCONNECTED":
+            return {...state, connecting: false, connected: false, connectionError: action.payload};
         default:
             throw new Error("Invalid gameplay reducer usage");
     }

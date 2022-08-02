@@ -22,11 +22,18 @@ body{
 .display{
     display: flex;
     flex-direction: column;
+    width: fit-content;
     justify-content: center;
     align-items: center;
+    margin: auto;
     padding: 1.5rem;
     border-radius: 0.8rem;
     background-color: rgba(222, 165, 78, 0.501);
+}
+.historyDisplay{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    
 }
 /* .input{
     
